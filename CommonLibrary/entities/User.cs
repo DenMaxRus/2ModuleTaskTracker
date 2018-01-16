@@ -6,9 +6,9 @@ namespace CommonLibrary.database {
 	public class User {
         
         public string PasswordHash { get; set; }
-		public int ID { get; set; }
-		public string Login { get; set; }
-		public UserAccessLevel AccessLevel { get; set; }
+        public int ID { get; set; }
+        public string Login { get; set; }
+        public UserAccessLevel AccessLevel { get; set; }
 
 		private string RawToHash(string raw) {
 			HashAlgorithm md5 = MD5.Create();
@@ -27,6 +27,8 @@ namespace CommonLibrary.database {
 		public bool IsCorrectPassword(string rawPassword) {
 			return RawToHash(rawPassword).Equals(PasswordHash);
 		}
+
+        public User() {}
 
 		public User(int id, string login, string rawPassword, UserAccessLevel level) {
 			ID = id;

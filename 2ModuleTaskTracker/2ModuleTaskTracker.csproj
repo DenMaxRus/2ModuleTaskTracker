@@ -95,6 +95,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommonLibrary\CommonLibrary.csproj">
+      <Project>{096cf57c-826a-4906-b256-f8ad51474b33}</Project>
+      <Name>CommonLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EmployersModule\EmployersModule.csproj">
       <Project>{a3ad18b2-7875-45d8-bafb-2673b9145cb7}</Project>
       <Name>EmployersModule</Name>

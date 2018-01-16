@@ -4,11 +4,11 @@ using System.Text;
 
 namespace CommonLibrary.database {
 	public class User {
-		private string passwordHash;
-
-		public int ID { get; private set; }
-		public string Login { get; private set; }
-		public UserAccessLevel AccessLevel { get; private set; }
+        
+        public string PasswordHash { get; set; }
+		public int ID { get; set; }
+		public string Login { get; set; }
+		public UserAccessLevel AccessLevel { get; set; }
 
 		private string RawToHash(string raw) {
 			HashAlgorithm md5 = MD5.Create();
@@ -21,11 +21,11 @@ namespace CommonLibrary.database {
 		}
 
 		public string Password {
-			set { passwordHash = RawToHash(value); }
+			set { PasswordHash = RawToHash(value); }
 		}
 
 		public bool IsCorrectPassword(string rawPassword) {
-			return RawToHash(rawPassword).Equals(passwordHash);
+			return RawToHash(rawPassword).Equals(PasswordHash);
 		}
 
 		public User(int id, string login, string rawPassword, UserAccessLevel level) {

@@ -5,11 +5,11 @@ namespace CommonLibrary.entities
 {
     public class Authentication
     {
-        private UserDatabase database;
+        private Database<User> database;
 
         public User CurrentUser { get; private set; }
 
-        public Authentication(UserDatabase database)
+        public Authentication(Database<User> database)
         {
             this.database = database;
         }
@@ -27,7 +27,7 @@ namespace CommonLibrary.entities
             CurrentUser = database.Select().FirstOrDefault(
                 u => login.Equals(u.Login) && u.IsCorrectPassword(rawPassword));
             
-            return CurrentUser == null;
+            return CurrentUser != null;
         }
     }
 }

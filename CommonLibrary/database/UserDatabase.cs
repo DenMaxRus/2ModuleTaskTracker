@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace _2ModuleTaskTracker.database {
-	public class UserDatable : Database<User> {
+namespace CommonLibrary.database {
+	public class UserDatabase : Database<User> {
 	}
 }

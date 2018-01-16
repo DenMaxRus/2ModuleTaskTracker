@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace _2ModuleTaskTracker.database {
+namespace CommonLibrary.database {
 	public class User {
 		private string passwordHash;
 

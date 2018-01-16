@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace _2ModuleTaskTracker.database {
+namespace CommonLibrary.database {
 	public class Database<T> {
 		public static Database<T> Read(string filePath) {
 			return new Database<T>();

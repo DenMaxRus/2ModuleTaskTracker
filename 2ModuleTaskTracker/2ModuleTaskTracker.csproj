@@ -54,8 +54,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="database\Database.cs" />
-    <Compile Include="database\UserDatable.cs" />
     <Compile Include="User.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -96,5 +94,16 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EmployersModule\EmployersModule.csproj">
+      <Project>{a3ad18b2-7875-45d8-bafb-2673b9145cb7}</Project>
+      <Name>EmployersModule</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TasksModule\TasksModule.csproj">
+      <Project>{272961a0-ac60-4690-bc76-3179db9824e1}</Project>
+      <Name>TasksModule</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

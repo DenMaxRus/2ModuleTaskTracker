@@ -1,4 +1,8 @@
-﻿public enum UserAccessLevel
+﻿using System;
+using System.Security.Cryptography;
+using System.Text;
+
+public enum UserAccessLevel
 {
     Default,
     Admin
@@ -14,7 +18,13 @@ public class User
 
     private string RawToHash(string raw)
     {
-        return raw; // TODO HASH
+        HashAlgorithm md5 = MD5.Create();
+
+        StringBuilder sb = new StringBuilder();
+        foreach (byte b in md5.ComputeHash(Encoding.UTF8.GetBytes(raw)))
+            sb.Append(b.ToString("X2"));
+
+        return sb.ToString();
     }
 
     public string Password

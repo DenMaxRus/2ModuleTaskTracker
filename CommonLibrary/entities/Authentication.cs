@@ -1,33 +1,29 @@
 ﻿using CommonLibrary.database;
+using System;
 using System.Linq;
 
-namespace CommonLibrary.entities
-{
-    public class Authentication
+namespace CommonLibrary.entities {
+	public class Authentication
     {
-        private UserDatabase database;
+		private static readonly Lazy<Authentication> instance = new Lazy<Authentication>();
 
-        public User CurrentUser { get; private set; }
+		public static Authentication Instance => instance.Value;
 
-        public Authentication(UserDatabase database)
-        {
-            this.database = database;
-        }
+		public User CurrentUser { get; private set; }
 
-        public bool Login(string login, string rawPassword)
+        public bool Login(string login, string rawPassword, Database<User> database)
         {
             CurrentUser = null;
 
-            if (!database.Select().Any())
+            if (database.Select().Count() == 0)
             {
-                User admin = new User(0, login, rawPassword, User.UserAccessLevel.Admin);
-                database.Add(admin);
+				database.Add(new User(0, login, rawPassword, User.UserAccessLevel.Admin));
             }
 
             CurrentUser = database.Select().FirstOrDefault(
                 u => login.Equals(u.Login) && u.IsCorrectPassword(rawPassword));
             
-            return CurrentUser == null;
+            return CurrentUser != null;
         }
     }
 }

@@ -28,11 +28,16 @@ namespace CommonLibrary.database {
 			return RawToHash(rawPassword).Equals(passwordHash);
 		}
 
+		private User() {}
+
 		public User(int id, string login, string rawPassword, UserAccessLevel level) {
 			ID = id;
 			Login = login;
 			Password = rawPassword;
 			AccessLevel = level;
+		}
+
+		public User(int id, string login, string rawPassword) : this(id, login, rawPassword, UserAccessLevel.Default) {
 		}
 
 		public enum UserAccessLevel {

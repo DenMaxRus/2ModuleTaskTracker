@@ -20,7 +20,7 @@ namespace _2ModuleTaskTracker {
 	public partial class MainWindow : Window {
 		public MainWindow() {
 			InitializeComponent();
-            (new TaskWindow()).ShowDialog();
+            new TaskWindow().ShowDialog();
 		}
 	}
 }

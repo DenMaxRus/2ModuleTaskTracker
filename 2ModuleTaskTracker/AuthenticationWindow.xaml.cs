@@ -22,8 +22,9 @@ namespace _2ModuleTaskTracker {
 		public AuthenticationWindow() {
 			InitializeComponent();
 
-			var UserDatabase = Database<User>.Read("users.json");
+			Authentication.Instance.Logout();
 
+			var UserDatabase = Database<User>.Read("users.json");
 			DatabaseManager.Instance.RegisterDatabase(UserDatabase);
 		}
 

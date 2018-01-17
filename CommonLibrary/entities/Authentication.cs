@@ -17,7 +17,7 @@ namespace CommonLibrary.entities {
 
             if (database.Select().Count() == 0)
             {
-				database.Add(new User(0, login, rawPassword, User.UserAccessLevel.Admin));
+				database.Add(new User(0, login, rawPassword, UserAccessLevel.Admin));
             }
 
             CurrentUser = database.Select().FirstOrDefault(
@@ -25,5 +25,9 @@ namespace CommonLibrary.entities {
             
             return CurrentUser != null;
         }
+
+		public void Logout() {
+			CurrentUser = null;
+		}
     }
 }

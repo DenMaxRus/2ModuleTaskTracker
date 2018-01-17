@@ -28,6 +28,9 @@ namespace _2ModuleTaskTracker {
 
 		private void UserManagementMenuItem_Click(object sender, RoutedEventArgs e) {
 			// TODO Open user management window
+			if(!UserManagementWindow.IsShown) {
+				new UserManagementWindow().Show();
+			}
 		}
 
 		private void Module1Button_Click(object sender, RoutedEventArgs e) {

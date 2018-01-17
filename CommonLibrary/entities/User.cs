@@ -6,10 +6,9 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace CommonLibrary.database {
+namespace CommonLibrary.entities {
 	public class User : INotifyPropertyChanged {
 		[JsonProperty]
-		[JsonConverter(typeof(PasswordConverter))]
 		private string password;
 		private int id;
 		private string login;
@@ -69,31 +68,13 @@ namespace CommonLibrary.database {
 		public User(int id, string login, string rawPassword) : this(id, login, rawPassword, UserAccessLevel.Default) {
 		}
 
-		public enum UserAccessLevel {
-			Default,
-			Admin
-		}
-
 		protected void OnPropertyChanged([CallerMemberName] string propertyName = null) {
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
+	}
 
-		public class PasswordConverter : JsonConverter {
-			public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) {
-				writer.WriteValue(value as String);
-			}
-
-			public override bool CanRead {
-				get { return true; }
-			}
-
-			public override bool CanConvert(Type objectType) {
-				return objectType == typeof(String);
-			}
-
-			public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer) {
-				return reader.Value as String;
-			}
-		}
+	public enum UserAccessLevel {
+		Default,
+		Admin
 	}
 }

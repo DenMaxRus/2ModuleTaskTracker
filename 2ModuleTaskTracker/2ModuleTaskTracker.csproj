@@ -72,7 +72,6 @@
     <Compile Include="UserManagementWindow.xaml.cs">
       <DependentUpon>UserManagementWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserPasswordConverter.cs" />
     <Page Include="AuthenticationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

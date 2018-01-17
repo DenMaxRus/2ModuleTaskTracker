@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CommonLibrary.entities {
 	public class Employer : INotifyPropertyChanged {
@@ -16,10 +11,34 @@ namespace CommonLibrary.entities {
 		private double salary;
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public int Id { get => id; set => id = value; }
-		public string Occupation { get => occupation; set => occupation = value; }
-		public string Name { get => name; set => name = value; }
-		public double Salary { get => salary; set => salary = value; }
+		public int Id {
+			get => id;
+			set {
+				id = value;
+				OnPropertyChanged();
+			}
+		}
+		public string Occupation {
+			get => occupation;
+			set {
+				occupation = value;
+				OnPropertyChanged();
+			}
+		}
+		public string Name {
+			get => name;
+			set {
+				name = value;
+				OnPropertyChanged();
+			}
+		}
+		public double Salary {
+			get => salary;
+			set {
+				salary = value;
+				OnPropertyChanged();
+			}
+		}
 
 		public Employer() : this("employer_" + GlobalId, "unknown", 0) {
 		}

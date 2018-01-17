@@ -18,8 +18,18 @@ namespace CommonLibrary.database {
 			}
 		}
 
+		public void UnregisterDatabase<T>() {
+			DatabaseStorage.Remove(typeof(T));
+		}
+
 		public Database<T> GetDatabase<T>() {
 			return DatabaseStorage[typeof(T)] as Database<T>;
+		}
+
+		public void Close() {
+			foreach(var keyValue in DatabaseStorage) {
+				(keyValue.Value as dynamic).Write();
+			}
 		}
 	}
 }

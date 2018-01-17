@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using CommonLibrary.database;
 
 namespace _2ModuleTaskTracker {
 	/// <summary>
@@ -37,6 +38,11 @@ namespace _2ModuleTaskTracker {
 		private void Module2Button_Click(object sender, RoutedEventArgs e) {
 			// TODO Open module 1 window
 			MessageBox.Show("Запуск модуля 2", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+		}
+
+		private void Window_Closed(object sender, EventArgs e) {
+			DatabaseManager.Instance.Close();
+			new AuthenticationWindow().Show();
 		}
 	}
 }

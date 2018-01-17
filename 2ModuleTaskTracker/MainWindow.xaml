@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:_2ModuleTaskTracker"
         mc:Ignorable="d"
-        Title="MenuWindow" Height="300" Width="300">
+        Title="MenuWindow" Height="300" Width="300" Closed="Window_Closed">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>

@@ -22,7 +22,7 @@ namespace _2ModuleTaskTracker {
 		public AuthenticationWindow() {
 			InitializeComponent();
 
-			var UserDatabase = Database<User>.Read("");
+			var UserDatabase = Database<User>.Read("users.json");
 
 			DatabaseManager.Instance.RegisterDatabase(UserDatabase);
 		}

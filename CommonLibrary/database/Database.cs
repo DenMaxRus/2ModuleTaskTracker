@@ -1,27 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using Newtonsoft.Json; 
 
 namespace CommonLibrary.database {
 	public class Database<T> {
-		public List<T> objects = new List<T>();
+
+		private String FilePath { get; set; }
+		private List<T> Objects { get; } = new List<T>();
 
 		public static Database<T> Read(string filePath) {
-			return new Database<T>();
+			Database<T> dataBase = new Database<T> {
+				FilePath = filePath,
+			};
+
+            if (File.Exists(filePath))
+            {
+                string content = File.ReadAllText(filePath);
+				dataBase.Objects.Clear();
+				dataBase.Objects.AddRange(JsonConvert.DeserializeObject<List<T>>(content));
+            }
+
+            return dataBase;
+		}
+
+        private Database()
+        {
+			Objects = new List<T>();
+        }
+
+		public void Write() {
+			Write(FilePath);
 		}
 
 		public void Write(string filePath) {
+            File.WriteAllText(filePath, JsonConvert.SerializeObject(Objects));
 		}
 
-		public void Add(T entry) {
-			objects.Add(entry);
-		}
-		public void Remove(T entry) { }
-		public void Update(T entry) { }
-		public IEnumerable<T> Select() {
-			return objects;
-		}
+		public void Add(T entry) { Objects.Add(entry); }
+		public void Remove(T entry) { Objects.Remove(entry); }
+		public List<T> Select() { return Objects; }
 	}
 }

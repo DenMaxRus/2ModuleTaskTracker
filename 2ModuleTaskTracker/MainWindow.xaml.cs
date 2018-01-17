@@ -30,7 +30,6 @@ namespace _2ModuleTaskTracker {
 		}
 
 		private void UserManagementMenuItem_Click(object sender, RoutedEventArgs e) {
-			// TODO Open user management window
 			if(Authentication.Instance.CurrentUser.AccessLevel >= UserAccessLevel.Admin
 				&& !UserManagementWindow.IsShown) {
 				new UserManagementWindow().Show();
@@ -38,8 +37,9 @@ namespace _2ModuleTaskTracker {
 		}
 
 		private void Module1Button_Click(object sender, RoutedEventArgs e) {
-			// TODO Open module 1 window
-			MessageBox.Show("Запуск модуля 1", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+			if(!EmployersModule.MainWindow.IsShown) {
+				new EmployersModule.MainWindow().Show();
+			}
 		}
 
 		private void Module2Button_Click(object sender, RoutedEventArgs e) {

@@ -1,0 +1,31 @@
+﻿<Window x:Class="_2ModuleTaskTracker.AuthenticationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:_2ModuleTaskTracker"
+        mc:Ignorable="d"
+        Title="2ModuleTaskTracker" Height="200" Width="250">
+    <Grid FocusManager.FocusedElement="{Binding ElementName=txtLogin}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" FontWeight="Bold">Copyright 2018</TextBlock>
+        <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" FontWeight="Bold" FontSize="16" Margin="0,10">Authentication</TextBlock>
+        <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right">Login</TextBlock>
+        <TextBox Name="txtLogin" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" Width="100" TabIndex="0"/>
+        <TextBlock Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right">Password</TextBlock>
+        <PasswordBox Name="txtPassword" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" Width="100" TabIndex="1"/>
+        <Button Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Click="Login_Click" HorizontalAlignment="Center" Margin="0,10" IsDefault="True" TabIndex="2">Login</Button>
+    </Grid>
+</Window>

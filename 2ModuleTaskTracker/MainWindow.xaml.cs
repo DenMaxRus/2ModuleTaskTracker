@@ -10,17 +10,46 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
+using CommonLibrary.database;
+using CommonLibrary.entities;
 
 namespace _2ModuleTaskTracker {
 	/// <summary>
-	/// Логика взаимодействия для MainWindow.xaml
+	/// Логика взаимодействия для MenuWindow.xaml
 	/// </summary>
 	public partial class MainWindow : Window {
 		public MainWindow() {
 			InitializeComponent();
-            new TaskWindow().ShowDialog();
+
+			userManagementMenuItem.IsEnabled = Authentication.Instance.CurrentUser.AccessLevel >= UserAccessLevel.Admin;
+		}
+
+		private void QuitMenuItem_Click(object sender, RoutedEventArgs e) {
+			Close();
+		}
+
+		private void UserManagementMenuItem_Click(object sender, RoutedEventArgs e) {
+			if(Authentication.Instance.CurrentUser.AccessLevel >= UserAccessLevel.Admin
+				&& !UserManagementWindow.IsShown) {
+				new UserManagementWindow().Show();
+			}
+		}
+
+		private void Module1Button_Click(object sender, RoutedEventArgs e) {
+			if(!EmployersModule.MainWindow.IsShown) {
+				new EmployersModule.MainWindow().Show();
+			}
+		}
+
+		private void Module2Button_Click(object sender, RoutedEventArgs e) {
+			// TODO Open module 1 window
+			MessageBox.Show("Запуск модуля 2", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+		}
+
+		private void Window_Closed(object sender, EventArgs e) {
+			DatabaseManager.Instance.Close();
+			new AuthenticationWindow().Show();
 		}
 	}
 }

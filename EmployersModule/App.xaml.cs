@@ -5,10 +5,8 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using CommonLibrary.database;
-using CommonLibrary.entities;
 
-namespace _2ModuleTaskTracker {
+namespace EmployersModule {
 	/// <summary>
 	/// Логика взаимодействия для App.xaml
 	/// </summary>

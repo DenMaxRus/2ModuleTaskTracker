@@ -1,0 +1,35 @@
+﻿<Window x:Class="EmployersModule.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EmployersModule"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525" Closed="Window_Closed" Loaded="Window_Loaded">
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Menu Grid.Row="0" Grid.ColumnSpan="2">
+                <MenuItem Header="File">
+                    <MenuItem Header="Export" Click="ExportMenuItem_Click"/>
+                    <MenuItem Header="Import" Click="ImportMenuItem_Click"/>
+                </MenuItem>
+            </Menu>
+            <DataGrid Name="gridEmployers"
+                  Grid.Row="1"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="True"
+                  CanUserDeleteRows="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Id" Binding="{Binding Path=Id}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Login" Binding="{Binding Path=Name}"/>
+                    <DataGridTextColumn Header="Occupation" Binding="{Binding Path=Occupation}"/>
+                    <DataGridTextColumn Header="Salary" Binding="{Binding Path=Salary, StringFormat={}{0:C}}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+    </Grid>
+</Window>

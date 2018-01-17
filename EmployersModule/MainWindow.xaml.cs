@@ -25,28 +25,29 @@ namespace EmployersModule {
 	public partial class MainWindow : Window {
 		public static bool IsShown { get; private set; }
 
-		private List<Employer> Employers { get; set; }
+		private List<Employer> employees { get; set; }
+        private SaveFileDialog saveFileDialog;
+        private OpenFileDialog openFileDialog;
 
-		public MainWindow() {
+
+        public MainWindow() {
 			InitializeComponent();
 
-			var employersDatabase = Database<Employer>.Read("employers.json");
-			DatabaseManager.Instance.RegisterDatabase(employersDatabase);
-
-			Employers = employersDatabase.Select();
-
-			gridEmployers.ItemsSource = Employers;
+            saveFileDialog = new SaveFileDialog {
+                Filter = "Json|*.json",
+                Title = "Select a Json file",
+                FileName = "employers.json"
+            };
+            openFileDialog = new OpenFileDialog {
+                Filter = "Json|*.json",
+                Title = "Select a Json file",
+                FileName = "employers.json"
+            };
 		}
 
 		private void ExportMenuItem_Click(object sender, RoutedEventArgs e) {
-			SaveFileDialog saveFileDialog = new SaveFileDialog {
-				Filter = "Json|*.json",
-				Title = "Select a Json file",
-				FileName = "employers.json"
-			};
-
 			if(saveFileDialog.ShowDialog() == true) {
-				File.WriteAllText(saveFileDialog.FileName, JsonConvert.SerializeObject(Employers));
+				File.WriteAllText(saveFileDialog.FileName, JsonConvert.SerializeObject(employees));
 			}
 		}
 
@@ -57,5 +58,18 @@ namespace EmployersModule {
 		private void Window_Loaded(object sender, RoutedEventArgs e) {
 			IsShown = true;
 		}
-	}
+
+        private void ImportMenuItem_Click (object sender, RoutedEventArgs e) {
+            Import();
+        }
+
+        private void Import () {
+            if (openFileDialog.ShowDialog() == true) {
+                var employersDatabase = Database<Employer>.Read(openFileDialog.FileName);
+                DatabaseManager.Instance.RegisterDatabase(employersDatabase);
+                employees = employersDatabase.Select();
+                gridEmployers.ItemsSource = employees;
+            }
+        }
+    }
 }

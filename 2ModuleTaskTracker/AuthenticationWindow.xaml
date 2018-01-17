@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:_2ModuleTaskTracker"
         mc:Ignorable="d"
         Title="2ModuleTaskTracker" Height="200" Width="250">
-    <Grid>
+    <Grid FocusManager.FocusedElement="{Binding ElementName=txtLogin}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>

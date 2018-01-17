@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using CommonLibrary.database;
+using CommonLibrary.entities;
 
 namespace _2ModuleTaskTracker {
 	/// <summary>
@@ -20,6 +21,8 @@ namespace _2ModuleTaskTracker {
 	public partial class MainWindow : Window {
 		public MainWindow() {
 			InitializeComponent();
+
+			userManagementMenuItem.IsEnabled = Authentication.Instance.CurrentUser.AccessLevel >= UserAccessLevel.Admin;
 		}
 
 		private void QuitMenuItem_Click(object sender, RoutedEventArgs e) {
@@ -28,7 +31,8 @@ namespace _2ModuleTaskTracker {
 
 		private void UserManagementMenuItem_Click(object sender, RoutedEventArgs e) {
 			// TODO Open user management window
-			if(!UserManagementWindow.IsShown) {
+			if(Authentication.Instance.CurrentUser.AccessLevel >= UserAccessLevel.Admin
+				&& !UserManagementWindow.IsShown) {
 				new UserManagementWindow().Show();
 			}
 		}

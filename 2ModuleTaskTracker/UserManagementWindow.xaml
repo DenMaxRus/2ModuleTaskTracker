@@ -22,19 +22,20 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <DataGrid Name="gridUsers" AutoGenerateColumns="False" Grid.Row="0">
+        <DataGrid Name="gridUsers"
+                  Grid.Row="0"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="True"
+                  CanUserDeleteRows="True">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Id" Binding="{Binding Path=Id}"/>
+                <DataGridTextColumn Header="Id" Binding="{Binding Path=Id}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Login" Binding="{Binding Path=Login}"/>
-                <DataGridTextColumn Header="Password" Binding="{Binding Path=Password}"/>
+                <DataGridTextColumn Header="Password" Binding="{Binding Path=Password, NotifyOnTargetUpdated=True}"/>
                 <DataGridComboBoxColumn
-                    Header="Role" SelectedItemBinding="{Binding Path=AccessLevel}"
+                    Header="Role"
+                    SelectedItemBinding="{Binding Path=AccessLevel}"
                     ItemsSource="{Binding Source={StaticResource RoleEnum}}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Grid.Row="1">
-            <Button>Save</Button>
-            <Button>Cancel</Button>
-        </StackPanel>
     </Grid>
 </Window>

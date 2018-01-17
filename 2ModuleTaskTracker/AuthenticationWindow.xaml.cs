@@ -29,12 +29,12 @@ namespace _2ModuleTaskTracker {
 		}
 
 		private void Login_Click(object sender, RoutedEventArgs e) {
-			if(string.IsNullOrEmpty(txtLogin.Text) || string.IsNullOrEmpty(txtPassword.Text)) {
+			if(string.IsNullOrEmpty(txtLogin.Text) || string.IsNullOrEmpty(txtPassword.Password)) {
 				MessageBox.Show("Пустой логин или пароль", "Ошибка аутентификации", MessageBoxButton.OK, MessageBoxImage.Error);
-			} else if(!Authentication.Instance.Login(txtLogin.Text, txtPassword.Text, DatabaseManager.Instance.GetDatabase<User>())) {
+			} else if(!Authentication.Instance.Login(txtLogin.Text, txtPassword.Password, DatabaseManager.Instance.GetDatabase<User>())) {
 				MessageBox.Show("Неправильный логин или пароль", "Ошибка аутентификации", MessageBoxButton.OK, MessageBoxImage.Error);
 			} else {
-				MessageBox.Show("Успешная авторизация", "Информация об аутентификации", MessageBoxButton.OK, MessageBoxImage.Information);
+				// MessageBox.Show("Успешная авторизация", "Информация об аутентификации", MessageBoxButton.OK, MessageBoxImage.Information);
 
 				new MainWindow().Show();
 

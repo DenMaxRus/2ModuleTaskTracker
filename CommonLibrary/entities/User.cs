@@ -8,6 +8,8 @@ using Newtonsoft.Json.Converters;
 
 namespace CommonLibrary.entities {
 	public class User : INotifyPropertyChanged {
+		private static int GlobalId { get; set; } = 0;
+
 		[JsonProperty]
 		private string password;
 		private int id;
@@ -15,8 +17,8 @@ namespace CommonLibrary.entities {
 		private UserAccessLevel accessLevel;
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		private string RawToHash(string raw) {
-			return Encoding.UTF8.GetString(MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(raw)));
+		public static string ConvertRawPassward(string rawPassword) {
+			return Encoding.UTF8.GetString(MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(rawPassword)));
 		}
 
 		public int Id {
@@ -38,7 +40,7 @@ namespace CommonLibrary.entities {
 		public string Password {
 			get => password;
 			set {
-				password = RawToHash(value);
+				password = ConvertRawPassward(value);
 				OnPropertyChanged();
 			}
 		}
@@ -53,19 +55,20 @@ namespace CommonLibrary.entities {
 		}
 
 		public bool IsCorrectPassword(string rawPassword) {
-			return RawToHash(rawPassword).Equals(password);
+			return ConvertRawPassward(rawPassword).Equals(password);
 		}
 
-		private User() { }
-
-		public User(int id, string login, string rawPassword, UserAccessLevel level) {
-			Id = id;
+		public User(string login, string rawPassword, UserAccessLevel level) {
+			Id = GlobalId++;
 			Login = login;
 			Password = rawPassword;
 			AccessLevel = level;
 		}
 
-		public User(int id, string login, string rawPassword) : this(id, login, rawPassword, UserAccessLevel.Default) {
+		public User(string login, string rawPassword) : this(login, rawPassword, UserAccessLevel.Default) {
+		}
+
+		public User() : this("user_" + GlobalId, String.Empty) {
 		}
 
 		protected void OnPropertyChanged([CallerMemberName] string propertyName = null) {

@@ -23,9 +23,9 @@
         <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" FontWeight="Bold">Copyright 2018</TextBlock>
         <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" FontWeight="Bold" FontSize="16" Margin="0,10">Authentication</TextBlock>
         <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right">Login</TextBlock>
-        <TextBox Name="txtLogin" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" Width="100"/>
+        <TextBox Name="txtLogin" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" Width="100" TabIndex="0"/>
         <TextBlock Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right">Password</TextBlock>
-        <TextBox Name="txtPassword" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" Width="100"/>
-        <Button Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Click="Login_Click" HorizontalAlignment="Center" Margin="0,10">Login</Button>
+        <PasswordBox Name="txtPassword" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" Width="100" TabIndex="1"/>
+        <Button Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Click="Login_Click" HorizontalAlignment="Center" Margin="0,10" IsDefault="True" TabIndex="2">Login</Button>
     </Grid>
 </Window>

@@ -29,29 +29,37 @@ namespace EmployersModule {
         private SaveFileDialog saveFileDialog;
         private OpenFileDialog openFileDialog;
 
-
         public MainWindow() {
 			InitializeComponent();
+            InitDialogs();            
+		}
 
+        private void InitDialogs () {
             saveFileDialog = new SaveFileDialog {
                 Filter = "Json|*.json",
-                Title = "Select a Json file",
-                FileName = "employers.json"
+                Title = "Select a Json file"
             };
             openFileDialog = new OpenFileDialog {
                 Filter = "Json|*.json",
                 Title = "Select a Json file",
-                FileName = "employers.json"
+                FileName = "employees.json"
             };
-		}
+        }
 
 		private void ExportMenuItem_Click(object sender, RoutedEventArgs e) {
-			if(saveFileDialog.ShowDialog() == true) {
-				File.WriteAllText(saveFileDialog.FileName, JsonConvert.SerializeObject(employees));
-			}
-		}
+            Export();
+        }
 
-		private void Window_Closed(object sender, EventArgs e) {
+        private void ImportMenuItem_Click (object sender, RoutedEventArgs e) {
+            Import();
+        }
+
+        private void ReportMenuItem_Click (object sender, RoutedEventArgs e) {
+            MakeReport();
+        }
+
+
+        private void Window_Closed(object sender, EventArgs e) {
 			IsShown = false;
 		}
 
@@ -59,8 +67,11 @@ namespace EmployersModule {
 			IsShown = true;
 		}
 
-        private void ImportMenuItem_Click (object sender, RoutedEventArgs e) {
-            Import();
+        private void Export () {
+            saveFileDialog.FileName = "employees.json";
+            if (saveFileDialog.ShowDialog() == true) {
+                File.WriteAllText(saveFileDialog.FileName, JsonConvert.SerializeObject(employees));
+            }
         }
 
         private void Import () {
@@ -69,6 +80,13 @@ namespace EmployersModule {
                 DatabaseManager.Instance.RegisterDatabase(employersDatabase);
                 employees = employersDatabase.Select();
                 gridEmployers.ItemsSource = employees;
+            }
+        }
+
+        private void MakeReport () {
+            saveFileDialog.FileName = "report.json";
+            if (saveFileDialog.ShowDialog() == true) {
+                File.WriteAllText(saveFileDialog.FileName, JsonConvert.SerializeObject(employees.Select(e => new { e.Id, e.Name })));
             }
         }
     }

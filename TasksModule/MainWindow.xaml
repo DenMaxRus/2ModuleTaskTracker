@@ -7,6 +7,32 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="40"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <DataGrid 
+            Name="dgTasks" Grid.Row="1" Grid.ColumnSpan="3" Padding="10" AutoGenerateColumns="False" 
+            ItemsSource="{Binding Tasks}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Duration" Binding="{Binding Path=Duration}"></DataGridTextColumn>
+                <DataGridComboBoxColumn 
+                    Header="Responsible" 
+                    x:Name="cbResponsible"
+                    SelectedItemBinding="{Binding Path=Responsible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    ItemsSource="{Binding Path=Responsibles, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                </DataGridComboBoxColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button Name="bSave" Grid.Row="2" Height="25" Width="70" Click="ButtonSave_Click">Save tasks</Button>
+        <Button Name="bLoad" Grid.Column="1" Grid.Row="2" Height="25" Width="70" Click="ButtonLoad_Click">Load tasks</Button>
+        <Button Name="bExport" Grid.Column="2" Grid.Row="2" Height="25" Width="70" Click="ButtonExport_Click">Export</Button>
     </Grid>
 </Window>

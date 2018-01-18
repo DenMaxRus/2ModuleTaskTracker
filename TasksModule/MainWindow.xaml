@@ -3,9 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         xmlns:local="clr-namespace:TasksModule"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Tasks" Height="450" Width="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="25"></RowDefinition>
@@ -18,11 +19,11 @@
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <DataGrid 
-            Name="dgTasks" Grid.Row="1" Grid.ColumnSpan="3" Padding="10" AutoGenerateColumns="False" 
+            Name="dgTasks" Grid.Row="1" Grid.ColumnSpan="1" Padding="10" AutoGenerateColumns="False" 
             ItemsSource="{Binding Tasks}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}"></DataGridTextColumn>
-                <DataGridTextColumn Header="Duration" Binding="{Binding Path=Duration}"></DataGridTextColumn>
+                <DataGridTextColumn x:Name="DurationColumn" Header="Duration" Binding="{Binding Path=Duration}"></DataGridTextColumn>
                 <DataGridComboBoxColumn 
                     Header="Responsible" 
                     x:Name="cbResponsible"
@@ -34,5 +35,10 @@
         <Button Name="bSave" Grid.Row="2" Height="25" Width="70" Click="ButtonSave_Click">Save tasks</Button>
         <Button Name="bLoad" Grid.Column="1" Grid.Row="2" Height="25" Width="70" Click="ButtonLoad_Click">Load tasks</Button>
         <Button Name="bExport" Grid.Column="2" Grid.Row="2" Height="25" Width="70" Click="ButtonExport_Click">Export</Button>
+        <lvc:CartesianChart Name="DurationChart" LegendLocation="None" Series="{Binding SeriesCollection}" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" Padding="10">
+            <lvc:CartesianChart.DataTooltip>
+                <lvc:DefaultTooltip SelectionMode="OnlySender" />
+            </lvc:CartesianChart.DataTooltip>
+        </lvc:CartesianChart>
     </Grid>
 </Window>

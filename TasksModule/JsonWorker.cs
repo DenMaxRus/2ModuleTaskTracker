@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using Newtonsoft.Json;
 
@@ -6,14 +7,14 @@ namespace TasksModule
 {
     class JsonWorker
     {
-        public void SaveTasksToJson(List<Task> tasks, string path)
+        public void SaveTasksToJson(ObservableCollection<Task> tasks, string path)
         {
             File.WriteAllText(path, JsonConvert.SerializeObject(tasks));
         }
 
-        public List<Task> LoadTasksFromJson(string path)
+        public ObservableCollection<Task> LoadTasksFromJson(string path)
         {
-            return JsonConvert.DeserializeObject<List<Task>>(File.ReadAllText(path));
+            return JsonConvert.DeserializeObject<ObservableCollection<Task>>(File.ReadAllText(path));
         }
 
         public List<Responsible> LoadResponsiblesFromJson(string path)
@@ -21,7 +22,7 @@ namespace TasksModule
             return JsonConvert.DeserializeObject<List<Responsible>>(File.ReadAllText(path));
         }
 
-        public void SaveTaskInformation(List<Task> tasks, List<Responsible> responsibles, string path)
+        public void SaveTaskInformation(ObservableCollection<Task> tasks, List<Responsible> responsibles, string path)
         {
             Dictionary<int, double> result = new Dictionary<int, double>();
             foreach (Responsible r in responsibles)

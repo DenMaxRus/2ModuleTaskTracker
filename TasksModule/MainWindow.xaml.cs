@@ -31,10 +31,15 @@ namespace TasksModule
         OpenFileDialog openFileDialog;
         SaveFileDialog saveFileDialog;
         JsonWorker worker;
+        public static bool IsShown { get; private set; }
 
-        public MainWindow()
+        public MainWindow() : this(true) { }
+
+        public MainWindow(bool isAdmin)
         {
             InitializeComponent();
+            if (!isAdmin)
+                dgTasks.IsReadOnly = true;
             saveFileDialog = new SaveFileDialog() { Filter = "JSON files|*.json" };
             openFileDialog = new OpenFileDialog() { Filter = "JSON files|*.json" };
             Tasks = new ObservableCollection<Task>();
@@ -44,7 +49,15 @@ namespace TasksModule
             {
                 if (openFileDialog.ShowDialog() == true)
                 {
-                    Responsibles = worker.LoadResponsiblesFromJson(openFileDialog.FileName);
+                    try
+                    {
+                        Responsibles = worker.LoadResponsiblesFromJson(openFileDialog.FileName);
+                    }
+                    catch (Exception ex)
+                    {
+                        ShowErrorMessage(ex.Message);
+                        Close();
+                    }
                 }
                 else
                     Close();
@@ -62,7 +75,14 @@ namespace TasksModule
         {
             if (saveFileDialog.ShowDialog() == true)
             {
-                worker.SaveTasksToJson(Tasks, saveFileDialog.FileName);
+                try
+                {
+                    worker.SaveTasksToJson(Tasks, saveFileDialog.FileName);
+                }
+                catch (Exception ex)
+                {
+                    ShowErrorMessage(ex.Message);
+                }
             }
         }
 
@@ -71,7 +91,14 @@ namespace TasksModule
             if (openFileDialog.ShowDialog() == true)
             {
                 SeriesCollection = new SeriesCollection();
-                Tasks = worker.LoadTasksFromJson(openFileDialog.FileName);
+                try
+                {
+                    Tasks = worker.LoadTasksFromJson(openFileDialog.FileName);
+                }
+                catch (Exception ex)
+                {
+                    ShowErrorMessage(ex.Message);
+                }
                 foreach (Task t in Tasks)
                 {
                     t.PropertyChanged += Task_PropertyChanged;
@@ -89,7 +116,7 @@ namespace TasksModule
 
         private void Task_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "Duration")
+            if (e.PropertyName == "Responsible")
                 UpdateChart();
         }
 
@@ -132,7 +159,21 @@ namespace TasksModule
         {
             if (e.Action == NotifyCollectionChangedAction.Add && e.NewItems.Count == 1 && e.NewItems[0] is Task)
                 (e.NewItems[0] as Task).PropertyChanged += Task_PropertyChanged;
-            UpdateChart();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            IsShown = true;
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            IsShown = false;
+        }
+
+        private void ShowErrorMessage(string message)
+        {
+            MessageBox.Show(message, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }

@@ -43,9 +43,14 @@ namespace _2ModuleTaskTracker {
 		}
 
 		private void Module2Button_Click(object sender, RoutedEventArgs e) {
-			// TODO Open module 1 window
-			MessageBox.Show("Запуск модуля 2", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
-		}
+            if (!TasksModule.MainWindow.IsShown)
+                if (Authentication.Instance.CurrentUser.AccessLevel >= UserAccessLevel.Admin)
+                    //Try-catch for case, when file loading was cancel (window closed in constructor)
+                    try { new TasksModule.MainWindow(true).Show(); } catch { }
+                else
+                    //Try-catch for case, when file loading was cancel (window closed in constructor)
+                    try { new TasksModule.MainWindow(false).Show(); } catch { }
+        }
 
 		private void Window_Closed(object sender, EventArgs e) {
 			DatabaseManager.Instance.Close();

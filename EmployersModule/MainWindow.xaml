@@ -16,6 +16,7 @@
                 <MenuItem Header="File">
                     <MenuItem Header="Export" Click="ExportMenuItem_Click"/>
                     <MenuItem Header="Import" Click="ImportMenuItem_Click"/>
+                    <MenuItem Header="Make Report" Click="ReportMenuItem_Click"/>
                 </MenuItem>
             </Menu>
             <DataGrid Name="gridEmployers"

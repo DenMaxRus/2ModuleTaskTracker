@@ -1,5 +1,7 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using CommonLibrary.entities;
 
 namespace TasksModule
 {
@@ -15,10 +17,45 @@ namespace TasksModule
             get => _responsible;
             set { if (value != null) _responsible = value; OnPropertyChanged(); }
         }
+        private int _completePercentage;
+        public int CompletePercentage {
+            get { return _completePercentage; }
+            set
+            {
+                _completePercentage = value;
+                if (_completePercentage == 0)
+                    Status = TaskStatus.NotStarted;
+                else if (_completePercentage == 100)
+                    Status = TaskStatus.Completed;
+                else
+                    Status = TaskStatus.InWork;
+                OnPropertyChanged();
+            }
+        }
+        private TaskStatus _status;
+        public TaskStatus Status { get { return _status; } private set { _status = value; OnPropertyChanged(); } }
+        private string _description;
+        public string Description { get { return _description; } set { _description = value; OnPropertyChanged(); } }
+        private User _author;
+        public User Author { get { return _author; } private set { _author = value; OnPropertyChanged(); } }
+        private DateTime _creationDate;
+        public DateTime CreationDate { get { return _creationDate; } private set { _creationDate = value; OnPropertyChanged(); } }
+        private DateTime _startDate;
+        public DateTime StartDate { get { return _startDate; } set { _startDate = value; OnPropertyChanged(); } }
+        private DateTime _endDate;
+        public DateTime EndDate { get { return _endDate; } set { _endDate = value; OnPropertyChanged(); } }
+
+        public enum TaskStatus { NotStarted, InWork, Completed };
+
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Task()
+        public Task() { }
+
+        public Task(User author)
         {
+            CreationDate = DateTime.Now;
+            Author = author;
+            Status = TaskStatus.NotStarted;
         }
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {

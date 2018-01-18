@@ -9,17 +9,12 @@ namespace CommonLibrary.database {
 		private String FilePath { get; set; }
 		private List<T> Objects { get; } = new List<T>();
 
-		public static Database<T> Read(string filePath) {
+		public static Database<T> Create(string filePath) {
 			Database<T> dataBase = new Database<T> {
 				FilePath = filePath,
 			};
 
-            if (File.Exists(filePath))
-            {
-                string content = File.ReadAllText(filePath);
-				dataBase.Objects.Clear();
-				dataBase.Objects.AddRange(JsonConvert.DeserializeObject<List<T>>(content));
-            }
+			dataBase.Read(filePath);
 
             return dataBase;
 		}
@@ -35,6 +30,15 @@ namespace CommonLibrary.database {
 
 		public void Write(string filePath) {
             File.WriteAllText(filePath, JsonConvert.SerializeObject(Objects));
+		}
+
+		public void Read(string filePath) {
+			if(filePath != null && File.Exists(filePath)) {
+				FilePath = filePath;
+				string content = File.ReadAllText(filePath);
+				Objects.Clear();
+				Objects.AddRange(JsonConvert.DeserializeObject<IEnumerable<T>>(content));
+			}
 		}
 
 		public void Add(T entry) { Objects.Add(entry); }

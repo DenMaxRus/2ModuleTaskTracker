@@ -23,13 +23,18 @@ namespace CommonLibrary.database {
 		}
 
 		public Database<T> GetDatabase<T>() {
-			return DatabaseStorage[typeof(T)] as Database<T>;
+			if(DatabaseStorage.ContainsKey(typeof(T))) {
+				return DatabaseStorage[typeof(T)] as Database<T>;
+			}
+
+			return null;
 		}
 
 		public void Close() {
 			foreach(var keyValue in DatabaseStorage) {
 				(keyValue.Value as dynamic).Write();
 			}
+			DatabaseStorage.Clear();
 		}
 	}
 }

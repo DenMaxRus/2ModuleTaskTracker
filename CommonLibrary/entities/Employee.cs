@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 
 namespace CommonLibrary.entities {
-	public class Employer : INotifyPropertyChanged {
+	public class Employee : INotifyPropertyChanged {
 		private static int GlobalId { get; set; } = 0;
 
 		private int id;
@@ -40,10 +40,10 @@ namespace CommonLibrary.entities {
 			}
 		}
 
-		public Employer() : this("employer_" + GlobalId, "unknown", 0) {
+		public Employee() : this(typeof(Employee).Name + "_" + GlobalId, "unknown", 0) {
 		}
 
-		public Employer(string name, string occupation, double salary) {
+		public Employee(string name, string occupation, double salary) {
 			Id = GlobalId++;
 			Occupation = occupation;
 			Name = name;

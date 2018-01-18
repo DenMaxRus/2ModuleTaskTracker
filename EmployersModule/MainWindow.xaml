@@ -16,7 +16,10 @@
                 <MenuItem Header="File">
                     <MenuItem Header="Export" Click="ExportMenuItem_Click"/>
                     <MenuItem Header="Import" Click="ImportMenuItem_Click"/>
-                    <MenuItem Header="Make Report" Click="ReportMenuItem_Click"/>
+                </MenuItem>
+                <MenuItem Header="Report">
+                    <MenuItem Header="Export report" Click="ExportReportMenuItem_Click"/>
+                    <MenuItem Header="Import report" Click="ImportReportMenuItem_Click"/>
                 </MenuItem>
             </Menu>
             <DataGrid Name="gridEmployers"
@@ -26,7 +29,7 @@
                   CanUserDeleteRows="True">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Id" Binding="{Binding Path=Id}" IsReadOnly="True"/>
-                    <DataGridTextColumn Header="Login" Binding="{Binding Path=Name}"/>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}"/>
                     <DataGridTextColumn Header="Occupation" Binding="{Binding Path=Occupation}"/>
                     <DataGridTextColumn Header="Salary" Binding="{Binding Path=Salary, StringFormat={}{0:C}}"/>
                 </DataGrid.Columns>

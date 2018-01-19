@@ -8,15 +8,6 @@
         xmlns:commonEntities="clr-namespace:CommonLibrary.entities;assembly=CommonLibrary"
         mc:Ignorable="d"
         Title="User Management" Height="300" Width="300" Loaded="Window_Loaded" Closed="Window_Closed">
-    <Window.Resources>
-        <ObjectDataProvider x:Key="RoleEnum"
-                MethodName="GetValues"
-                ObjectType="{x:Type system:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="commonEntities:UserRole" />
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -30,28 +21,31 @@
             </ListBox.ItemContainerStyle>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Border Margin="5" BorderThickness="1" BorderBrush="SteelBlue" CornerRadius="4" Width="370">
+                    <Border Margin="5" BorderThickness="1" BorderBrush="SteelBlue" CornerRadius="4">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="100"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock>Id</TextBlock>
                             <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding Path=Id}"/>
-                            <TextBlock Grid.Row="0" Grid.Column="1" FontWeight="Bold" Text="{Binding Path=Login}"/>
-                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Path=AccessLevel}"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" FontWeight="Bold" FontSize="16" Text="{Binding Path=Login}"/>
+                            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+                                <TextBlock Text="Role: "/>
+                                <TextBlock Text="{Binding Path=RoleId}"/>
+                            </StackPanel>
                         </Grid>
                     </Border>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
         <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Button Click="AddUserButton_Click">Add user</Button>
-            <Button Click="RemoveUserButton_Click">Remove user</Button>
+            <Button Name="btnAddUser" Click="AddUserButton_Click">Add user</Button>
+            <Button Name="btnRemoveUser" Click="RemoveUserButton_Click">Remove user</Button>
         </StackPanel>
     </Grid>
 </Window>

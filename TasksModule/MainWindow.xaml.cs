@@ -1,4 +1,5 @@
-﻿using LiveCharts;
+﻿using CommonLibrary.entities;
+using LiveCharts;
 using LiveCharts.Wpf;
 using Microsoft.Win32;
 using System;
@@ -33,13 +34,25 @@ namespace TasksModule
         JsonWorker worker;
         public static bool IsShown { get; private set; }
 
-        public MainWindow() : this(true) { }
-
-        public MainWindow(bool isAdmin)
+        public MainWindow()
         {
+            Task t = new Task(new User("testUser", ""))
+            {
+                Name = "Test",
+                Duration = 24,
+                CompletePercentage = 78,
+                Description = "Simple task",
+                StartDate = DateTime.Now.AddDays(-2),
+                EndDate = DateTime.Now.AddDays(1),
+                Responsible = new Responsible(-1, "Unknown")
+            };
+            TaskEditWindow win = new TaskEditWindow
+            {
+                DataContext = t
+            };
+            win.ShowDialog();
+
             InitializeComponent();
-            if (!isAdmin)
-                dgTasks.IsReadOnly = true;
             saveFileDialog = new SaveFileDialog() { Filter = "JSON files|*.json" };
             openFileDialog = new OpenFileDialog() { Filter = "JSON files|*.json" };
             Tasks = new ObservableCollection<Task>();

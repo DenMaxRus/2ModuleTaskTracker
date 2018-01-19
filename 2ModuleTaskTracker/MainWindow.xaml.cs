@@ -23,7 +23,7 @@ namespace _2ModuleTaskTracker {
 		public MainWindow() {
 			InitializeComponent();
 
-			userManagementMenuItem.IsEnabled = Authentication.Instance.CurrentUser.AccessLevel >= UserRole.Admin;
+			// userManagementMenuItem.IsEnabled = Authentication.Instance.CurrentUser.AccessLevel >= UserRole.Admin;
 		}
 
 		private void QuitMenuItem_Click(object sender, RoutedEventArgs e) {
@@ -31,10 +31,7 @@ namespace _2ModuleTaskTracker {
 		}
 
 		private void UserManagementMenuItem_Click(object sender, RoutedEventArgs e) {
-			if(Authentication.Instance.CurrentUser.AccessLevel >= UserRole.Admin
-				&& !UserManagementWindow.IsShown) {
-				new UserManagementWindow().Show();
-			}
+			new UserManagementWindow().Show();
 		}
 
 		private void Module1Button_Click(object sender, RoutedEventArgs e) {
@@ -44,14 +41,12 @@ namespace _2ModuleTaskTracker {
 		}
 
 		private void Module2Button_Click(object sender, RoutedEventArgs e) {
-            if (!TasksModule.MainWindow.IsShown)
-                if (Authentication.Instance.CurrentUser.AccessLevel >= UserRole.Admin)
-                    //Try-catch for case, when file loading was cancel (window closed in constructor)
-                    try { new TasksModule.MainWindow(true).Show(); } catch { }
-                else
-                    //Try-catch for case, when file loading was cancel (window closed in constructor)
-                    try { new TasksModule.MainWindow(false).Show(); } catch { }
-        }
+			if(!TasksModule.MainWindow.IsShown) {
+				try {
+					new TasksModule.MainWindow().Show();
+				} catch { }
+			}
+		}
 
 		private void Window_Closed(object sender, EventArgs e) {
 			DatabaseManager.Instance.Close();

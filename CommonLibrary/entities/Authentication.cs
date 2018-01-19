@@ -11,16 +11,22 @@ namespace CommonLibrary.entities {
 
 		public User CurrentUser { get; private set; }
 
-        public bool Login(string login, string rawPassword, Database<User> database)
+        public bool Login(string login, string rawPassword)
         {
-            CurrentUser = null;
+			var userDatabase = DatabaseManager.Instance.GetDatabase<User>();
 
-            if (database.Select().Count() == 0)
+			CurrentUser = null;
+
+            if (userDatabase.Select().Count() == 0)
             {
-				database.Add(new User(login, rawPassword, UserRole.Admin));
-            }
+				var rolesDatabase = DatabaseManager.Instance.GetDatabase<UserRole>();
+				var godRole = rolesDatabase.Select().First();
+				userDatabase.Add(new User(login, rawPassword) {
+					RoleId = godRole.Id
+				});
+			}
 
-            CurrentUser = database.Select().FirstOrDefault(
+            CurrentUser = userDatabase.Select().FirstOrDefault(
                 u => login.Equals(u.Login) && u.IsCorrectPassword(rawPassword));
             
             return CurrentUser != null;

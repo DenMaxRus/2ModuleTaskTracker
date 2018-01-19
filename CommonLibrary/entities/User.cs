@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
+using CommonLibrary.database;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -13,48 +15,58 @@ namespace CommonLibrary.entities {
 		private int id;
 		private string login;
 		private UserRole accessLevel;
+		private string roleID;
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public static string ConvertRawPassward(string rawPassword) {
-			return Encoding.UTF8.GetString(MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(rawPassword)));
-		}
+        public static string ConvertRawPassward(string rawPassword)
+        {
+            return Encoding.UTF8.GetString(MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(rawPassword)));
+        }
 
-		public int Id {
-			get => id;
-			set {
-				id = value;
-				OnPropertyChanged();
-			}
-		}
-		public string Login {
-			get => login;
-			set {
-				login = value;
-				OnPropertyChanged();
-			}
-		}
+        public string RoleId
+        {
+            get => roleID;
+            set
+            {
+                roleID = value;
+                OnPropertyChanged();
+            }
+        }
 
-		[JsonIgnore]
-		public string Password {
-			get => password;
-			set {
-				password = ConvertRawPassward(value);
-				OnPropertyChanged();
-			}
-		}
+        public int Id
+        {
+            get => id;
+            set
+            {
+                id = value;
+                OnPropertyChanged();
+            }
+        }
+        public string Login
+        {
+            get => login;
+            set
+            {
+                login = value;
+                OnPropertyChanged();
+            }
+        }
 
-		[JsonConverter(typeof(StringEnumConverter))]
-		public UserRole AccessLevel {
-			get => accessLevel;
-			set {
-				accessLevel = value;
-				OnPropertyChanged();
-			}
-		}
+        [JsonIgnore]
+        public string Password
+        {
+            get => password;
+            set
+            {
+                password = ConvertRawPassward(value);
+                OnPropertyChanged();
+            }
+        }
 
-		public bool IsCorrectPassword(string rawPassword) {
-			return ConvertRawPassward(rawPassword).Equals(password);
-		}
+        public bool IsCorrectPassword(string rawPassword)
+        {
+            return ConvertRawPassward(rawPassword).Equals(password);
+        }
 
 		private User(User user) {
 			id = user.id;
@@ -64,21 +76,33 @@ namespace CommonLibrary.entities {
 		}
 
 		[JsonConstructor]
-		private User(int id, string login, string password, UserRole accessLevel) {
+		private User(int id, string login, string password, string roleId) {
 			this.id = id;
 			this.login = login;
 			this.password = password;
-			this.accessLevel = accessLevel;
+			RoleId = roleId;
 		}
 
-		public User(string login, string rawPassword, UserRole level) {
+		public User(string login, string rawPassword, string roleId) {
 			Id = -1;
 			Login = login;
 			Password = rawPassword;
-			AccessLevel = level;
+			RoleId = roleId;
 		}
+        public bool IsHaveAccessTo(string module, string action)
+        {
+            UserRole findRole = DatabaseManager.Instance
+                                               .GetDatabase<UserRole>()
+                                               .Select()
+                                               .FirstOrDefault(role => role.Id.Equals(RoleId));
+			if(findRole == null) {
+				return false;
+			}
 
-		public User(string login, string rawPassword) : this(login, rawPassword, UserRole.User) {
+            return findRole.IsHaveAccessTo(module, action);
+        }
+
+		public User(string login, string rawPassword) : this(login, rawPassword, null) {
 		}
 
 		protected void OnPropertyChanged([CallerMemberName] string propertyName = null) {
@@ -100,10 +124,5 @@ namespace CommonLibrary.entities {
 		public override int GetHashCode() {
 			return id.GetHashCode();
 		}
-	}
-
-	public enum UserRole {
-		User,
-		Admin
 	}
 }

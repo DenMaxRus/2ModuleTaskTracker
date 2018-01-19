@@ -95,9 +95,12 @@ namespace CommonLibrary.entities {
                                                .GetDatabase<UserRole>()
                                                .Select()
                                                .FirstOrDefault(role => role.Id.Equals(RoleId));
-			if(findRole == null) {
-				return false;
-			}
+
+            if (findRole == null)
+                return false;
+
+            if (findRole.IsHaveAccessTo("ALL", "ALL"))
+                return true;
 
             return findRole.IsHaveAccessTo(module, action);
         }

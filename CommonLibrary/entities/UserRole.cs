@@ -24,6 +24,8 @@ namespace CommonLibrary.entities
             }
         }
 
+        public string Name { get; set; }
+
         public UserRole() 
         {
             actionAccess = new List<string>();

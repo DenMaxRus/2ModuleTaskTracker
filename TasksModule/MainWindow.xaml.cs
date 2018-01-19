@@ -36,26 +36,17 @@ namespace TasksModule
 
         public MainWindow()
         {
-            //Task t = new Task(new User("testUser", ""))
-            //{
-            //    Name = "Test",
-            //    Duration = 24,
-            //    CompletePercentage = 78,
-            //    Description = "Simple task",
-            //    StartDate = DateTime.Now.AddDays(-2),
-            //    EndDate = DateTime.Now.AddDays(1),
-            //    Responsible = new Responsible(-1, "Unknown")
-            //};
-            //TaskEditWindow win = new TaskEditWindow(t);
-            //win.ShowDialog();
-
-            
             InitializeComponent();
             saveFileDialog = new SaveFileDialog() { Filter = "JSON files|*.json" };
             openFileDialog = new OpenFileDialog() { Filter = "JSON files|*.json" };
             Tasks = new ObservableCollection<Task>();
             lbTasks.ItemsSource = Tasks;
             worker = new JsonWorker();
+
+            //Rights
+            if (!Authentication.Instance.CurrentUser.IsHaveAccessTo("TasksModule", "TasksModule.WRITE"))
+                bAddTask.IsEnabled = bDeleteTask.IsEnabled = false;
+
             if (MessageBox.Show("Chose file with employers.", "File loading", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.Cancel) == MessageBoxResult.OK)
             {
                 if (openFileDialog.ShowDialog() == true)
@@ -135,17 +126,18 @@ namespace TasksModule
 
         private void BAddTask_Click(object sender, RoutedEventArgs e)
         {
-            //Task t = new Task(Authentication.Instance.CurrentUser);
-            Task t = new Task(new User("testUser", "21"));
+            Task t = new Task(Authentication.Instance.CurrentUser);
+            //Task t = new Task(new User("testUser", "21"));
             new TaskEditWindow(Responsibles, t).ShowDialog();
-            Tasks.Add(t);
+            if (t.Name != null && t.Name != string.Empty)
+                Tasks.Add(t);
         }
 
         private void BDeleteTask_Click(object sender, RoutedEventArgs e)
         {
-            if(lbTasks.SelectedItem !=null && lbTasks.SelectedItem is Task)
+            if (lbTasks.SelectedItem != null && lbTasks.SelectedItem is Task)
             {
-                if(MessageBox.Show("Delete this task?", "Delete", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                if (MessageBox.Show("Delete this task?", "Delete", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     Tasks.Remove(lbTasks.SelectedItem as Task);
                 }
@@ -154,14 +146,15 @@ namespace TasksModule
 
         private void ListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            try
-            {
-                new TaskEditWindow(Responsibles, (sender as ListBoxItem).Content as Task).ShowDialog();
-            }
-            catch (Exception ex)
-            {
-                ShowErrorMessage(ex.Message);
-            }
+            if (Authentication.Instance.CurrentUser.IsHaveAccessTo("TasksModule", "TasksModule.CHANGE"))
+                try
+                {
+                    new TaskEditWindow(Responsibles, (sender as ListBoxItem).Content as Task).ShowDialog();
+                }
+                catch (Exception ex)
+                {
+                    ShowErrorMessage(ex.Message);
+                }
         }
 
         private void MiHelp_Click(object sender, RoutedEventArgs e)
@@ -229,10 +222,7 @@ namespace TasksModule
         {
             if (Tasks != null && Tasks.Count > 0 && Responsibles != null && Responsibles.Count > 0)
             {
-                if (saveFileDialog.ShowDialog() == true)
-                {
-                    worker.SaveTaskInformation(Tasks, Responsibles, saveFileDialog.FileName);
-                }
+                new ExportWindow(Tasks, Responsibles).ShowDialog();
             }
         }
     }

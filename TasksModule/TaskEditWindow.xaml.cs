@@ -55,7 +55,6 @@ namespace TasksModule
                     dpStartDate.SelectedDate = Task.StartDate;
                 else
                     dpStartDate.SelectedDate = Task.StartDate = DateTime.Now;
-                //TODO: enddate
                 if (Task.EndDate != null && Task.EndDate != DateTime.MinValue)
                     dpEndDate.SelectedDate = Task.EndDate;
                 else
@@ -92,20 +91,76 @@ namespace TasksModule
                 }
                 else
                 {
-                    Task.Name = tbName.Text;
-                    Task.Duration = Convert.ToDouble(tbDuration.Text);
-                    Task.CompletePercentage = (int)slCompleteRecentage.Value;
-                    Task.StartDate = dpStartDate.SelectedDate.Value;
-                    Task.EndDate = dpEndDate.SelectedDate.Value;
-                    Task.Description = tbDescription.Text;
-                    Task.Responsible = cbResponsible.SelectedItem is Responsible ? cbResponsible.SelectedItem as Responsible : new Responsible(-1, "Unknown");
-                    this.Close();
+                    if (Task.Name != null && Task.Name != string.Empty)
+                    {
+                        Task.Name = tbName.Text;
+                        Task.Duration = Convert.ToDouble(tbDuration.Text);
+                        Task.CompletePercentage = (int)slCompleteRecentage.Value;
+                        Task.StartDate = dpStartDate.SelectedDate.Value;
+                        Task.EndDate = dpEndDate.SelectedDate.Value;
+                        Task.Description = tbDescription.Text;
+                        Task.Responsible = cbResponsible.SelectedItem is Responsible ? cbResponsible.SelectedItem as Responsible : new Responsible(-1, "Unknown");
+                        Close();
+                    }
+                    else
+                        MessageBox.Show("Wrong task name", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void UpdateEndDate()
+        {
+            if (dpStartDate.SelectedDate != null && dpStartDate.SelectedDate.Value != DateTime.MinValue &&
+                cbResponsible.SelectedItem is Responsible && Responsibles.Contains(cbResponsible.SelectedItem as Responsible) &&
+                tbDuration.Text != string.Empty && double.TryParse(tbDuration.Text, out double duration) && duration >= 0)
+            {
+                dpEndDate.SelectedDate = CalendarManager.GetTaskEndTime(
+                    dpStartDate.SelectedDate.Value,
+                    CalendarManager.GetDaysQuantity(
+                        (cbResponsible.SelectedItem as Responsible).HoursPerDay, duration));
+            }
+        }
+
+        private void CbResponsible_SelectionChanged(object sender, SelectionChangedEventArgs e) => UpdateEndDate();
+
+        private void DpStartDate_SelectedDateChanged(object sender, SelectionChangedEventArgs e) => UpdateEndDate();
+
+        private void TbDuration_TextChanged(object sender, TextChangedEventArgs e) => UpdateEndDate();
+
+        private static bool IsValidDuration(string text)
+        {
+            bool parsed = double.TryParse(text, out double res);
+            return parsed && res >= 0;
+        }
+
+        private void TbDuration_Pasting(object sender, DataObjectPastingEventArgs e)
+        {
+            if (e.DataObject.GetDataPresent(typeof(String)))
+            {
+                String text = (String)e.DataObject.GetData(typeof(String));
+                if (!IsValidDuration(text))
+                {
+                    e.CancelCommand();
+                }
+            }
+            else
+            {
+                e.CancelCommand();
+            }
+        }
+
+        private void BCancel_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void TbDuration_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !IsValidDuration(e.Text);
         }
     }
 }

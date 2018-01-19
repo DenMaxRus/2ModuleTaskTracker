@@ -16,7 +16,16 @@ namespace TasksModule
         public Responsible Responsible
         {
             get => _responsible;
-            set { if (value != null) _responsible = value; OnPropertyChanged(); }
+            set
+            {
+                if (value != null)
+                {
+                    _responsible = value;
+                    if (StartDate != DateTime.MinValue)
+                        EndDate = CalendarManager.GetTaskEndTime(StartDate, CalendarManager.GetDaysQuantity(_responsible.HoursPerDay, Duration));
+                }
+                OnPropertyChanged();
+            }
         }
         private int _completePercentage;
         public int CompletePercentage
@@ -46,7 +55,22 @@ namespace TasksModule
         public DateTime CreationDate { get { return _creationDate; } private set { _creationDate = value; OnPropertyChanged(); } }
         private DateTime _startDate;
         [JsonProperty(ItemConverterType = typeof(Newtonsoft.Json.Converters.JavaScriptDateTimeConverter))]
-        public DateTime StartDate { get { return _startDate; } set { _startDate = value; OnPropertyChanged(); } }
+        public DateTime StartDate
+        {
+            get
+            {
+                return _startDate;
+            }
+            set
+            {
+                if (value != DateTime.MinValue && Responsible != null)
+                {
+                    _startDate = value;
+                    EndDate = CalendarManager.GetTaskEndTime(StartDate, CalendarManager.GetDaysQuantity(Responsible.HoursPerDay, Duration));
+                }
+                OnPropertyChanged();
+            }
+        }
         private DateTime _endDate;
         [JsonProperty(ItemConverterType = typeof(Newtonsoft.Json.Converters.JavaScriptDateTimeConverter))]
         public DateTime EndDate { get { return _endDate; } set { _endDate = value; OnPropertyChanged(); } }

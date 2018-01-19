@@ -27,6 +27,9 @@ namespace _2ModuleTaskTracker {
 			InitializeComponent();
 
 			gridUsers.ItemsSource = Users;
+
+            // Не знаю как называется поле допускающее редактирование 
+            //gridUsers.EditEnabled = Authentication.Instance.CurrentUser.IsHaveAccessTo("UserManagement", "Edit");
 		}
 
 		private void Window_Loaded(object sender, RoutedEventArgs e) {

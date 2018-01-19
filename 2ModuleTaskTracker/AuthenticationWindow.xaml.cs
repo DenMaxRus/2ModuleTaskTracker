@@ -24,6 +24,9 @@ namespace _2ModuleTaskTracker {
 
 			Authentication.Instance.Logout();
 
+            var RolesDatabase = Database<UserRole>.Create("roles.json");
+            DatabaseManager.Instance.RegisterDatabase(RolesDatabase);
+
 			var UserDatabase = Database<User>.Create("users.json");
 			DatabaseManager.Instance.RegisterDatabase(UserDatabase);
 		}

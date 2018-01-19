@@ -52,6 +52,7 @@
     <Compile Include="entities\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="entities\Authentication.cs" />
+    <Compile Include="entities\UserRole.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -30,6 +30,12 @@ namespace _2ModuleTaskTracker {
 		}
 
 		private void UserManagementMenuItem_Click(object sender, RoutedEventArgs e) {
+
+            //if (Authentication.Instance.CurrentUser.IsHaveAccessTo("UserManagement", "Show")
+            //    && !UserManagementWindow.IsShown) {
+            //    new UserManagementWindow().Show();
+            //}
+
 			if(Authentication.Instance.CurrentUser.AccessLevel >= UserAccessLevel.Admin
 				&& !UserManagementWindow.IsShown) {
 				new UserManagementWindow().Show();

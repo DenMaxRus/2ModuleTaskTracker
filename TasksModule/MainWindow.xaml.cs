@@ -36,28 +36,26 @@ namespace TasksModule
 
         public MainWindow()
         {
-            Task t = new Task(new User("testUser", ""))
-            {
-                Name = "Test",
-                Duration = 24,
-                CompletePercentage = 78,
-                Description = "Simple task",
-                StartDate = DateTime.Now.AddDays(-2),
-                EndDate = DateTime.Now.AddDays(1),
-                Responsible = new Responsible(-1, "Unknown")
-            };
-            TaskEditWindow win = new TaskEditWindow
-            {
-                DataContext = t
-            };
-            win.ShowDialog();
+            //Task t = new Task(new User("testUser", ""))
+            //{
+            //    Name = "Test",
+            //    Duration = 24,
+            //    CompletePercentage = 78,
+            //    Description = "Simple task",
+            //    StartDate = DateTime.Now.AddDays(-2),
+            //    EndDate = DateTime.Now.AddDays(1),
+            //    Responsible = new Responsible(-1, "Unknown")
+            //};
+            //TaskEditWindow win = new TaskEditWindow(t);
+            //win.ShowDialog();
 
+            
             InitializeComponent();
             saveFileDialog = new SaveFileDialog() { Filter = "JSON files|*.json" };
             openFileDialog = new OpenFileDialog() { Filter = "JSON files|*.json" };
             Tasks = new ObservableCollection<Task>();
+            lbTasks.ItemsSource = Tasks;
             worker = new JsonWorker();
-            dgTasks.ItemsSource = Tasks;
             if (MessageBox.Show("Chose file with employers.", "File loading", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.Cancel) == MessageBoxResult.OK)
             {
                 if (openFileDialog.ShowDialog() == true)
@@ -80,68 +78,13 @@ namespace TasksModule
             if (Responsibles != null)
             {
                 Responsibles.Add(new Responsible(-1, "Unknown"));
-                cbResponsible.ItemsSource = Responsibles;
-            }
-        }
-
-        private void ButtonSave_Click(object sender, RoutedEventArgs e)
-        {
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                try
-                {
-                    worker.SaveTasksToJson(Tasks, saveFileDialog.FileName);
-                }
-                catch (Exception ex)
-                {
-                    ShowErrorMessage(ex.Message);
-                }
-            }
-        }
-
-        private void ButtonLoad_Click(object sender, RoutedEventArgs e)
-        {
-            if (openFileDialog.ShowDialog() == true)
-            {
-                SeriesCollection = new SeriesCollection();
-                try
-                {
-                    Tasks = worker.LoadTasksFromJson(openFileDialog.FileName);
-                }
-                catch (Exception ex)
-                {
-                    ShowErrorMessage(ex.Message);
-                }
-                foreach (Task t in Tasks)
-                {
-                    t.PropertyChanged += Task_PropertyChanged;
-                    if (!Responsibles.Contains(t.Responsible))
-                        t.Responsible = new Responsible(-1, "Unknown");
-                }
-                dgTasks.ItemsSource = Tasks;
-                cbResponsible.ItemsSource = Responsibles;
-                Tasks.CollectionChanged += new NotifyCollectionChangedEventHandler(TasksCollectionChanged);
-
-                //Chart
-                UpdateChart();
             }
         }
 
         private void Task_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "Responsible")
+            if (e.PropertyName == "Responsible" || e.PropertyName == "Duration")
                 UpdateChart();
-        }
-
-        private void ButtonExport_Click(object sender, RoutedEventArgs e)
-        {
-            if (Tasks != null && Tasks.Count > 0 && Responsibles != null && Responsibles.Count > 0)
-            {
-                if (saveFileDialog.ShowDialog() == true)
-                {
-                    worker.SaveTaskInformation(Tasks, Responsibles, saveFileDialog.FileName);
-                }
-            }
         }
 
         private void UpdateChart()
@@ -150,6 +93,7 @@ namespace TasksModule
             Dictionary<Responsible, double> assigments = new Dictionary<Responsible, double>();
             foreach (Responsible r in Responsibles)
             {
+                assigments.Remove(r);
                 assigments.Add(r, 0);
                 foreach (Task t in Tasks)
                 {
@@ -187,6 +131,109 @@ namespace TasksModule
         private void ShowErrorMessage(string message)
         {
             MessageBox.Show(message, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private void BAddTask_Click(object sender, RoutedEventArgs e)
+        {
+            //Task t = new Task(Authentication.Instance.CurrentUser);
+            Task t = new Task(new User("testUser", "21"));
+            new TaskEditWindow(Responsibles, t).ShowDialog();
+            Tasks.Add(t);
+        }
+
+        private void BDeleteTask_Click(object sender, RoutedEventArgs e)
+        {
+            if(lbTasks.SelectedItem !=null && lbTasks.SelectedItem is Task)
+            {
+                if(MessageBox.Show("Delete this task?", "Delete", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    Tasks.Remove(lbTasks.SelectedItem as Task);
+                }
+            }
+        }
+
+        private void ListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                new TaskEditWindow(Responsibles, (sender as ListBoxItem).Content as Task).ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage(ex.Message);
+            }
+        }
+
+        private void MiHelp_Click(object sender, RoutedEventArgs e)
+        {
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    worker.SaveTasksToJson(Tasks, saveFileDialog.FileName);
+                }
+                catch (Exception ex)
+                {
+                    ShowErrorMessage(ex.Message);
+                }
+            }
+        }
+
+        private void MiExit_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void MiLoadTasks_Click(object sender, RoutedEventArgs e)
+        {
+            if (openFileDialog.ShowDialog() == true)
+            {
+                SeriesCollection = new SeriesCollection();
+                try
+                {
+                    Tasks = worker.LoadTasksFromJson(openFileDialog.FileName);
+                }
+                catch (Exception ex)
+                {
+                    ShowErrorMessage(ex.Message);
+                }
+                foreach (Task t in Tasks)
+                {
+                    t.PropertyChanged += Task_PropertyChanged;
+                    if (!Responsibles.Contains(t.Responsible))
+                        t.Responsible = new Responsible(-1, "Unknown");
+                }
+                Tasks.CollectionChanged += new NotifyCollectionChangedEventHandler(TasksCollectionChanged);
+                lbTasks.ItemsSource = Tasks;
+                //Chart
+                UpdateChart();
+            }
+        }
+
+        private void MiSaveTasks_Click(object sender, RoutedEventArgs e)
+        {
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    worker.SaveTasksToJson(Tasks, saveFileDialog.FileName);
+                }
+                catch (Exception ex)
+                {
+                    ShowErrorMessage(ex.Message);
+                }
+            }
+        }
+
+        private void MiExport_Click(object sender, RoutedEventArgs e)
+        {
+            if (Tasks != null && Tasks.Count > 0 && Responsibles != null && Responsibles.Count > 0)
+            {
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    worker.SaveTaskInformation(Tasks, Responsibles, saveFileDialog.FileName);
+                }
+            }
         }
     }
 }

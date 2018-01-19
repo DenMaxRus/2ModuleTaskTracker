@@ -20,31 +20,55 @@ namespace TasksModule
     /// </summary>
     public partial class TaskEditWindow : Window
     {
-        static string[] statuses = { "Status: not started" , "Status: in work", "Status: completed" };
+        static string[] statuses = { "Status: not started", "Status: in work", "Status: completed" };
         public List<Responsible> Responsibles { get; set; }
+        public Task Task { get; private set; }
 
-        public TaskEditWindow() : this(new List<Responsible>() { new Responsible(-1, "Unknown")}) { }
+        private TaskEditWindow() : this(new List<Responsible>() { new Responsible(-1, "Unknown") }, new Task(Authentication.Instance.CurrentUser)) { }
+        public TaskEditWindow(Task t) : this(new List<Responsible>() { new Responsible(-1, "Unknown") }, t) { }
 
-        public TaskEditWindow(List<Responsible> responsibles)
+        /// <summary>
+        /// Creates new task edit window. It's only edit so if you need to create task you need to do it before creating this window and send this task here.
+        /// </summary>
+        /// <param name="responsibles">List of emploees</param>
+        /// <param name="task">Task for edit</param>
+        public TaskEditWindow(List<Responsible> responsibles, Task task)
         {
             InitializeComponent();
             Responsibles = responsibles;
+            Task = task;
             cbResponsible.ItemsSource = Responsibles;
-            if (DataContext != null && DataContext is Task)
+            if (Task != null)
             {
-                tbName.Text = (DataContext as Task).Name;
-                tbDuration.Text = (DataContext as Task).Duration.ToString();
-                slCompleteRecentage.Value = (DataContext as Task).CompletePercentage;
-                dpStartDate.SelectedDate = (DataContext as Task).StartDate;
-                dpEndDate.SelectedDate = (DataContext as Task).EndDate;
-                tbStatus.Text = statuses[(int)(DataContext as Task).Status];
-                tbDescription.Text = (DataContext as Task).Description;
-                tbAuthor.Text = "Author: " + (DataContext as Task).Author.Login;
-                tbCreationDate.Text = "Creation date: " + (DataContext as Task).CreationDate.ToShortDateString();
+                if (Task.Name != null)
+                    tbName.Text = Task.Name;
+                if (Task.Duration != double.NaN)
+                    tbDuration.Text = Task.Duration.ToString();
+                if (Task.CompletePercentage >= 0)
+                    slCompleteRecentage.Value = Task.CompletePercentage;
+                else
+                    slCompleteRecentage.Value = Task.CompletePercentage = 0;
+                if (Task.Responsible == null)
+                    Task.Responsible = new Responsible(-1, "Unknown");
+                cbResponsible.SelectedItem = Task.Responsible;
+                if (Task.StartDate != null && Task.StartDate != DateTime.MinValue)
+                    dpStartDate.SelectedDate = Task.StartDate;
+                else
+                    dpStartDate.SelectedDate = Task.StartDate = DateTime.Now;
+                //TODO: enddate
+                if (Task.EndDate != null && Task.EndDate != DateTime.MinValue)
+                    dpEndDate.SelectedDate = Task.EndDate;
+                else
+                    dpEndDate.SelectedDate = Task.EndDate = DateTime.Now;
+                tbStatus.Text = statuses[(int)Task.Status];
+                if (Task.Description != null)
+                    tbDescription.Text = Task.Description;
+                tbAuthor.Text = "Author: " + Task.Author.Login;
+                tbCreationDate.Text = "Creation date: " + Task.CreationDate.ToShortDateString();
             }
             else
             {
-                //tbAuthor.Text = "Author: " + Authentication.Instance.CurrentUser.Login;
+                throw new ArgumentNullException("Task");
             }
         }
 
@@ -56,6 +80,32 @@ namespace TasksModule
                 tbStatus.Text = statuses[(int)TaskStatus.Completed];
             else
                 tbStatus.Text = statuses[(int)TaskStatus.InWork];
+        }
+
+        private void BSave_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (Task == null)
+                {
+                    throw new ArgumentNullException("Task");
+                }
+                else
+                {
+                    Task.Name = tbName.Text;
+                    Task.Duration = Convert.ToDouble(tbDuration.Text);
+                    Task.CompletePercentage = (int)slCompleteRecentage.Value;
+                    Task.StartDate = dpStartDate.SelectedDate.Value;
+                    Task.EndDate = dpEndDate.SelectedDate.Value;
+                    Task.Description = tbDescription.Text;
+                    Task.Responsible = cbResponsible.SelectedItem is Responsible ? cbResponsible.SelectedItem as Responsible : new Responsible(-1, "Unknown");
+                    this.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

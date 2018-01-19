@@ -54,7 +54,7 @@ namespace TasksModule
         {
             return 1213502048 + Id.GetHashCode();
         }
-        //public static bool operator !=(Responsible first, Responsible second) => first.ID != second.ID;
-        //public static bool operator ==(Responsible first, Responsible second) => first.ID == second.ID;
+        //public static bool operator !=(Responsible first, Responsible second) => first.Id != second.Id;
+        //public static bool operator ==(Responsible first, Responsible second) => first.Id == second.Id;
     }
 }

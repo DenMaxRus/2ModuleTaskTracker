@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using _2ModuleTaskTracker.UserManagement;
 using CommonLibrary.database;
 using CommonLibrary.entities;
 
@@ -22,7 +23,7 @@ namespace _2ModuleTaskTracker {
 		public MainWindow() {
 			InitializeComponent();
 
-			userManagementMenuItem.IsEnabled = Authentication.Instance.CurrentUser.AccessLevel >= UserAccessLevel.Admin;
+			userManagementMenuItem.IsEnabled = Authentication.Instance.CurrentUser.AccessLevel >= UserRole.Admin;
 		}
 
 		private void QuitMenuItem_Click(object sender, RoutedEventArgs e) {
@@ -30,7 +31,7 @@ namespace _2ModuleTaskTracker {
 		}
 
 		private void UserManagementMenuItem_Click(object sender, RoutedEventArgs e) {
-			if(Authentication.Instance.CurrentUser.AccessLevel >= UserAccessLevel.Admin
+			if(Authentication.Instance.CurrentUser.AccessLevel >= UserRole.Admin
 				&& !UserManagementWindow.IsShown) {
 				new UserManagementWindow().Show();
 			}
@@ -44,7 +45,7 @@ namespace _2ModuleTaskTracker {
 
 		private void Module2Button_Click(object sender, RoutedEventArgs e) {
             if (!TasksModule.MainWindow.IsShown)
-                if (Authentication.Instance.CurrentUser.AccessLevel >= UserAccessLevel.Admin)
+                if (Authentication.Instance.CurrentUser.AccessLevel >= UserRole.Admin)
                     //Try-catch for case, when file loading was cancel (window closed in constructor)
                     try { new TasksModule.MainWindow(true).Show(); } catch { }
                 else

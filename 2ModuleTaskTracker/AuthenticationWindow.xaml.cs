@@ -24,8 +24,11 @@ namespace _2ModuleTaskTracker {
 
 			Authentication.Instance.Logout();
 
-			var UserDatabase = Database<User>.Create("users.json");
-			DatabaseManager.Instance.RegisterDatabase(UserDatabase);
+			var userDatabase = DatabaseManager.Instance.GetDatabase<User>();
+			if(userDatabase == null) {
+				var UserDatabase = new UserDatabase().Read("users.json");
+				DatabaseManager.Instance.RegisterDatabase(UserDatabase);
+			}
 		}
 
 		private void Login_Click(object sender, RoutedEventArgs e) {

@@ -1,48 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
-using Newtonsoft.Json; 
+using System.Linq;
+using Newtonsoft.Json;
 
 namespace CommonLibrary.database {
 	public class Database<T> {
 
 		private String FilePath { get; set; }
-		private List<T> Objects { get; } = new List<T>();
+		private Dictionary<T, bool> Entries { get; set; } = new Dictionary<T, bool>();
 
-		public static Database<T> Create(string filePath) {
-			Database<T> dataBase = new Database<T> {
-				FilePath = filePath,
-			};
-
-			dataBase.Read(filePath);
-
-            return dataBase;
+		public Database() {
 		}
-
-        private Database()
-        {
-			Objects = new List<T>();
-        }
 
 		public void Write() {
 			Write(FilePath);
 		}
 
 		public void Write(string filePath) {
-            File.WriteAllText(filePath, JsonConvert.SerializeObject(Objects));
+			File.WriteAllText(filePath, JsonConvert.SerializeObject(Entries.Keys as IEnumerable<T>));
 		}
 
-		public void Read(string filePath) {
-			if(filePath != null && File.Exists(filePath)) {
-				FilePath = filePath;
-				string content = File.ReadAllText(filePath);
-				Objects.Clear();
-				Objects.AddRange(JsonConvert.DeserializeObject<IEnumerable<T>>(content));
+		public Database<T> Read(string filePath) {
+			FilePath = filePath;
+			Drop();
+			if(FilePath != null && File.Exists(FilePath)) {
+				foreach(var entry in JsonConvert.DeserializeObject<IEnumerable<T>>(File.ReadAllText(FilePath))) {
+					Add(entry);
+				}
+			}
+
+			return this;
+		}
+
+		public virtual bool Add(T entry) {
+			var isNewEntry = !Entries.ContainsKey(entry);
+			Entries.Add(entry, false);
+
+			return isNewEntry;
+		}
+		public virtual bool Update(T entry) {
+			if(Entries.Remove(entry)) {
+				Entries.Add(entry, false);
+				return true;
+			}
+
+			return false;
+		}
+		public virtual void AddOrUpdate(T entry) {
+			if(!Update(entry)) {
+				Add(entry);
 			}
 		}
-
-		public void Add(T entry) { Objects.Add(entry); }
-		public void Remove(T entry) { Objects.Remove(entry); }
-		public List<T> Select() { return Objects; }
+		public virtual bool Remove(T entry) { return Entries.Remove(entry); }
+		public virtual IReadOnlyCollection<T> Select() { return Entries.Keys; }
+		public virtual void Drop() { Entries.Clear(); }
 	}
 }

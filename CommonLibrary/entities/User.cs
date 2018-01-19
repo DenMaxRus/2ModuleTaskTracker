@@ -7,14 +7,12 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace CommonLibrary.entities {
-	public class User : INotifyPropertyChanged {
-		private static int GlobalId { get; set; } = 0;
-
+	public class User : INotifyPropertyChanged, IEquatable<User> {
 		[JsonProperty]
 		private string password;
 		private int id;
 		private string login;
-		private UserAccessLevel accessLevel;
+		private UserRole accessLevel;
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		public static string ConvertRawPassward(string rawPassword) {
@@ -46,7 +44,7 @@ namespace CommonLibrary.entities {
 		}
 
 		[JsonConverter(typeof(StringEnumConverter))]
-		public UserAccessLevel AccessLevel {
+		public UserRole AccessLevel {
 			get => accessLevel;
 			set {
 				accessLevel = value;
@@ -58,26 +56,54 @@ namespace CommonLibrary.entities {
 			return ConvertRawPassward(rawPassword).Equals(password);
 		}
 
-		public User(string login, string rawPassword, UserAccessLevel level) {
-			Id = GlobalId++;
+		private User(User user) {
+			id = user.id;
+			login = user.login;
+			password = user.password;
+			accessLevel = user.accessLevel;
+		}
+
+		[JsonConstructor]
+		private User(int id, string login, string password, UserRole accessLevel) {
+			this.id = id;
+			this.login = login;
+			this.password = password;
+			this.accessLevel = accessLevel;
+		}
+
+		public User(string login, string rawPassword, UserRole level) {
+			Id = -1;
 			Login = login;
 			Password = rawPassword;
 			AccessLevel = level;
 		}
 
-		public User(string login, string rawPassword) : this(login, rawPassword, UserAccessLevel.Default) {
-		}
-
-		public User() : this("user_" + GlobalId, String.Empty) {
+		public User(string login, string rawPassword) : this(login, rawPassword, UserRole.User) {
 		}
 
 		protected void OnPropertyChanged([CallerMemberName] string propertyName = null) {
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
+
+		public static User Copy(User copyFrom) {
+			return new User(copyFrom);
+		}
+
+		public bool Equals(User other) {
+			return other != null && id.Equals(other.id);
+		}
+
+		public override bool Equals(object obj) {
+			return Equals(obj as User);
+		}
+
+		public override int GetHashCode() {
+			return id.GetHashCode();
+		}
 	}
 
-	public enum UserAccessLevel {
-		Default,
+	public enum UserRole {
+		User,
 		Admin
 	}
 }

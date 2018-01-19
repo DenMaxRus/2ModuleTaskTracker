@@ -25,18 +25,20 @@ namespace EmployersModule {
 	public partial class MainWindow : Window {
 		public static bool IsShown { get; private set; }
 
-		private List<Employee> Employees { get; set; }
+		private IEnumerable<Employee> Employees { get; set; }
+
+		public Database<Employee> EmployeeDatabase { get; private set; }
 
 		public MainWindow() {
 			InitializeComponent();
 
-			var employeeDatabase = DatabaseManager.Instance.GetDatabase<Employee>();
-			if(employeeDatabase == null) {
-				employeeDatabase = Database<Employee>.Create(null);
-				DatabaseManager.Instance.RegisterDatabase(employeeDatabase);
+			EmployeeDatabase = DatabaseManager.Instance.GetDatabase<Employee>();
+			if(EmployeeDatabase == null) {
+				EmployeeDatabase = new Database<Employee>();
+				DatabaseManager.Instance.RegisterDatabase(EmployeeDatabase);
 			}
 
-			Employees = employeeDatabase.Select();
+			Employees = EmployeeDatabase.Select();
 		}
 
 		private void ExportMenuItem_Click(object sender, RoutedEventArgs e) {
@@ -50,7 +52,6 @@ namespace EmployersModule {
 		private void ExportReportMenuItem_Click(object sender, RoutedEventArgs e) {
 			MakeReport();
 		}
-
 
 		private void Window_Closed(object sender, EventArgs e) {
 			IsShown = false;
@@ -95,12 +96,13 @@ namespace EmployersModule {
 		}
 
 		private void ImportReportMenuItem_Click(object sender, RoutedEventArgs e) {
-			if(Employees == null || Employees.Count == 0) {
+			if(Employees == null || Employees.Count() == 0) {
 				MessageBox.Show("Загрузите сотрудников", "Ошибка создания отчёта", MessageBoxButton.OK, MessageBoxImage.Error);
 			} else {
 				new ReportWindow().ShowDialog();
-			}
 
+				Employees = EmployeeDatabase.Select();
+			}
 		}
 	}
 }

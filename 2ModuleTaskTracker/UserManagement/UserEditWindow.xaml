@@ -1,0 +1,46 @@
+﻿<Window x:Class="_2ModuleTaskTracker.UserManagement.UserEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:_2ModuleTaskTracker.UserManagement"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        xmlns:commonEntities="clr-namespace:CommonLibrary.entities;assembly=CommonLibrary"
+        mc:Ignorable="d"
+        Title="User edit" Height="300" Width="446.774">
+    <Window.Resources>
+        <ObjectDataProvider x:Key="RoleEnum"
+                MethodName="GetValues"
+                ObjectType="{x:Type system:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="commonEntities:UserRole" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </Window.Resources>
+    <Grid DataContext="{Binding User, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:UserEditWindow}}}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="Id" Grid.Row="0" Grid.Column="0"/>
+        <TextBox Text="{Binding Path=Id}" Grid.Row="0" Grid.Column="1" IsReadOnly="True"/>
+        <TextBlock Text="Login" Grid.Row="1" Grid.Column="0"/>
+        <TextBox Text="{Binding Path=Login}" Grid.Row="1" Grid.Column="1"/>
+        <TextBlock Text="Password" Grid.Row="2" Grid.Column="0"/>
+        <PasswordBox Name="txtPassword" Grid.Row="2" Grid.Column="1"/>
+        <TextBlock Text="Role" Grid.Row="3" Grid.Column="0"/>
+        <ComboBox SelectedItem="{Binding Path=AccessLevel}" ItemsSource="{Binding Source={StaticResource RoleEnum}}" Grid.Row="3" Grid.Column="1"/>
+        <Button Grid.Row="4" Grid.Column="0" HorizontalAlignment="Center" Click="SaveButton_Click">Save</Button>
+        <Button Grid.Row="4" Grid.Column="1" HorizontalAlignment="Center" Click="Button_Click">Cancel</Button>
+        <GroupBox Grid.Row="0" Grid.Column="2" Grid.RowSpan="6" Header="Access right"/>
+    </Grid>
+</Window>

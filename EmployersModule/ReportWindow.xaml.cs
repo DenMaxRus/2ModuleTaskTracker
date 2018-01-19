@@ -22,7 +22,7 @@ namespace EmployersModule {
 	/// Логика взаимодействия для ReportWindow.xaml
 	/// </summary>
 	public partial class ReportWindow : Window {
-		private List<Employee> Employees { get; set; }
+		private IReadOnlyCollection<Employee> Employees { get; set; }
 
 		public ReportWindow() {
 			InitializeComponent();
@@ -40,7 +40,7 @@ namespace EmployersModule {
 				var employeeSalaryMap = JsonConvert.DeserializeObject<Dictionary<String, double>>(File.ReadAllText(openFileDialog.FileName));
 				var employeeSalaryMap2 = employeeSalaryMap.Select(m => {
 					var employeeId = Convert.ToInt32(m.Key);
-					var employee = Employees.Find(x => x.Id == employeeId);
+					var employee = Employees.FirstOrDefault(x => x.Id == employeeId);
 					return new {
 						Employee = new {
 							Id = employeeId,

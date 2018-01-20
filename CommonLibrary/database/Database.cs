@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Newtonsoft.Json;
 
 namespace CommonLibrary.database {
@@ -17,14 +18,16 @@ namespace CommonLibrary.database {
 		}
 
 		public void Write(string filePath) {
-			File.WriteAllText(filePath, JsonConvert.SerializeObject(Entries.Keys as IEnumerable<T>));
+			var encodedJson = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(Entries.Keys as IEnumerable<T>)));
+			File.WriteAllText(filePath, encodedJson);
 		}
 
         public virtual Database<T> Read(string filePath) {
 			FilePath = filePath;
 			Drop();
 			if(FilePath != null && File.Exists(FilePath)) {
-				foreach(var entry in JsonConvert.DeserializeObject<IEnumerable<T>>(File.ReadAllText(FilePath))) {
+				var decodedJson = Encoding.UTF8.GetString(Convert.FromBase64String(File.ReadAllText(FilePath)));
+				foreach(var entry in JsonConvert.DeserializeObject<IEnumerable<T>>(decodedJson)) {
                     InternalAddFromJson(entry);
 				}
 			}

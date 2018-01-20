@@ -3,14 +3,17 @@ using CommonLibrary.entities;
 
 namespace CommonLibrary.database {
 	public class UserDatabase : Database<User> {
+		private readonly static int UnknownId = -1;
 		private static int GlobalId { get; set; } = 1;
 
 		public override bool Add(User entry) {
+			entry.Id = GlobalId;
 			if(base.Add(entry)) {
-				entry.Id = GlobalId++;
+				GlobalId++;
 				return true;
 			}
 
+			entry.Id = UnknownId;
 			return false;
 		}
 
@@ -22,7 +25,9 @@ namespace CommonLibrary.database {
         public override Database<User> Read (string filePath)
         {
             var result = base.Read (filePath);
-            GlobalId = Select ().Max (e => e.Id) + 1;
+			if(Select().Count != 0) {
+				GlobalId = Select().Max(e => e.Id) + 1;
+			}
             return result;
         }
 	}

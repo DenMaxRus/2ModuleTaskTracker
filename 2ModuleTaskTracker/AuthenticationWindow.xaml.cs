@@ -24,7 +24,7 @@ namespace _2ModuleTaskTracker {
 		static AuthenticationWindow() {
 			ModuleManager.Instance.Register(new Module() {
 				Name = "ALL",
-				Actions = new List<string> { "ALL.ALL" }
+				Actions = new List<string> { "ALL" }
 			});
 			ModuleManager.Instance.Register(EmployersModule.App.Module);
 			ModuleManager.Instance.Register(UserManagement.UserManagementWindow.Module);
@@ -33,7 +33,6 @@ namespace _2ModuleTaskTracker {
                 Name = "EditUserRoles",
                 Actions = new List<string> { "EditUserRoles.READ", "EditUserRoles.WRITE" }
             });
-            ModuleManager.Instance.Register(EmployersModule.App.Module);
 
 			var rolesDatabase = new UserRoleDatabase().Read("roles.json");
 			if(rolesDatabase.Select().Count == 0) {

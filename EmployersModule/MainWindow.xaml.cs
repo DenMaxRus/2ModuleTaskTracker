@@ -19,90 +19,116 @@ using Microsoft.Win32;
 using Newtonsoft.Json;
 
 namespace EmployersModule {
-	/// <summary>
-	/// Логика взаимодействия для MainWindow.xaml
-	/// </summary>
-	public partial class MainWindow : Window {
-		public static bool IsShown { get; private set; }
+    /// <summary>
+    /// Логика взаимодействия для MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window {
+        public static bool IsShown { get; private set; }
 
-		private IEnumerable<Employee> Employees { get; set; }
+        private IEnumerable<Employee> Employees { get; set; }
 
-		public Database<Employee> EmployeeDatabase { get; private set; }
+        public Database<Employee> EmployeeDatabase { get; private set; }
 
-		public MainWindow() {
-			InitializeComponent();
+        public MainWindow () {
+            InitializeComponent();
 
-			EmployeeDatabase = DatabaseManager.Instance.GetDatabase<Employee>();
-			if(EmployeeDatabase == null) {
-				EmployeeDatabase = new Database<Employee>();
-				DatabaseManager.Instance.RegisterDatabase(EmployeeDatabase);
-			}
+            EmployeeDatabase = DatabaseManager.Instance.GetDatabase<Employee>();
+            if (EmployeeDatabase == null) {
+                EmployeeDatabase = new Database<Employee>();
+                DatabaseManager.Instance.RegisterDatabase(EmployeeDatabase);
+            }
 
-			Employees = EmployeeDatabase.Select();
-		}
+            Employees = EmployeeDatabase.Select();
+        }
 
-		private void ExportMenuItem_Click(object sender, RoutedEventArgs e) {
-			Export();
-		}
+        #region layout events
+        private void Window_Closed (object sender, EventArgs e) {
+            IsShown = false;
+        }
 
-		private void ImportMenuItem_Click(object sender, RoutedEventArgs e) {
-			Import();
-		}
+        private void Window_Loaded (object sender, RoutedEventArgs e) {
+            IsShown = true;
+        }
 
-		private void ExportReportMenuItem_Click(object sender, RoutedEventArgs e) {
-			MakeReport();
-		}
+        private void ExportMenuItem_Click (object sender, RoutedEventArgs e) {
+            ExportEmployees();
+        }
 
-		private void Window_Closed(object sender, EventArgs e) {
-			IsShown = false;
-		}
+        private void ImportMenuItem_Click (object sender, RoutedEventArgs e) {
+            ImportEmployees();
+        }
 
-		private void Window_Loaded(object sender, RoutedEventArgs e) {
-			IsShown = true;
-		}
+        private void ExportReportMenuItem_Click (object sender, RoutedEventArgs e) {
+            MakeReport();
+        }
 
-		private void Export() {
-			var saveFileDialog = new SaveFileDialog {
-				Title = "Select file",
-				FileName = "employees.json"
-			};
-			if(saveFileDialog.ShowDialog() == true) {
-				File.WriteAllText(saveFileDialog.FileName, JsonConvert.SerializeObject(Employees));
-			}
-		}
+        private void ImportReportMenuItem_Click (object sender, RoutedEventArgs e) {
+            ImportReport();
+        }
 
-		private void Import() {
-			var openFileDialog = new OpenFileDialog {
-				Filter = "Json|*.json",
-				Title = "Select a Json file",
-			};
-			if(openFileDialog.ShowDialog() == true) {
-				var employersDatabase = DatabaseManager.Instance.GetDatabase<Employee>();
-				employersDatabase.Read(openFileDialog.FileName);
-				
-				gridEmployers.ItemsSource = Employees;
-			}
-		}
+        private void Add_MenuItem_Click (object sender, RoutedEventArgs e) {
 
-		private void MakeReport() {
-			var saveFileDialog = new SaveFileDialog {
-				Filter = "Json|*.json",
-				Title = "Select file",
-				FileName = "report.json"
-			};
-			if(saveFileDialog.ShowDialog() == true) {
-				File.WriteAllText(saveFileDialog.FileName, JsonConvert.SerializeObject(Employees.Select(e => new { e.Id, e.Name })));
-			}
-		}
+        }
 
-		private void ImportReportMenuItem_Click(object sender, RoutedEventArgs e) {
-			if(Employees == null || Employees.Count() == 0) {
-				MessageBox.Show("Загрузите сотрудников", "Ошибка создания отчёта", MessageBoxButton.OK, MessageBoxImage.Error);
-			} else {
-				new ReportWindow().ShowDialog();
+        private void Change_MenuItem_Click (object sender, RoutedEventArgs e) {
 
-				Employees = EmployeeDatabase.Select();
-			}
-		}
-	}
+        }
+
+        private void Delete_MenuItem_Click (object sender, RoutedEventArgs e) {
+            if (listEmployees.SelectedIndex != -1) {
+                Employee item = listEmployees.SelectedItem as Employee;
+                EmployeeDatabase.Remove(item);
+                listEmployees.ItemsSource = null;
+                listEmployees.ItemsSource = EmployeeDatabase.Select();
+            }
+        }
+        #endregion
+
+        private void ExportEmployees () {
+            var saveFileDialog = new SaveFileDialog {
+                Title = "Select file",
+                FileName = "employees.json"
+            };
+            if (saveFileDialog.ShowDialog() == true) {
+                File.WriteAllText(saveFileDialog.FileName, JsonConvert.SerializeObject(Employees));
+            }
+        }
+
+        private void ImportEmployees () {
+            var openFileDialog = new OpenFileDialog {
+                Filter = "Json|*.json",
+                Title = "Select a Json file",
+            };
+            if (openFileDialog.ShowDialog() == true) {
+                var employersDatabase = DatabaseManager.Instance.GetDatabase<Employee>();
+                try {
+                    employersDatabase.Read(openFileDialog.FileName);
+                    gridEmployers.ItemsSource = Employees;
+                    listEmployees.ItemsSource = Employees;
+                } catch (Exception e) {
+                    MessageBox.Show("Не удается загрузить файл");
+                }
+            }
+        }
+
+        private void MakeReport () {
+            var saveFileDialog = new SaveFileDialog {
+                Filter = "Json|*.json",
+                Title = "Select file",
+                FileName = "report.json"
+            };
+            if (saveFileDialog.ShowDialog() == true) {
+                File.WriteAllText(saveFileDialog.FileName, JsonConvert.SerializeObject(Employees.Select(e => new { e.Id, e.Name })));
+            }
+        }
+
+        private void ImportReport () {
+            if (Employees == null || Employees.Count() == 0) {
+                MessageBox.Show("Загрузите сотрудников", "Ошибка создания отчёта", MessageBoxButton.OK, MessageBoxImage.Error);
+            } else {
+                new ReportWindow().ShowDialog();
+                Employees = EmployeeDatabase.Select();
+            }
+        }
+    }
 }

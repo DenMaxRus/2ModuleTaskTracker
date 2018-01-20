@@ -2,107 +2,153 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using CommonLibrary.database;
 using CommonLibrary.entities;
+using CommonLibrary.ModuleFramework;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 
 namespace EmployersModule {
-	/// <summary>
-	/// Логика взаимодействия для MainWindow.xaml
-	/// </summary>
-	public partial class MainWindow : Window {
-		public static bool IsShown { get; private set; }
+    /// <summary>
+    /// Логика взаимодействия для MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window {
+        public static bool IsShown { get; private set; }
 
-		private IEnumerable<Employee> Employees { get; set; }
+        public static Module Module { get; } = new Module() {
+            Name = "EmployeeManagement",
+            Actions = new List<string> {
+                "EmployeeManagement" + ".READ",
+                "EmployeeManagement" + ".WRITE",
+            }
+        };
 
-		public Database<Employee> EmployeeDatabase { get; private set; }
+        private IEnumerable<Employee> Employees { get; set; }
 
-		public MainWindow() {
-			InitializeComponent();
+        public Database<Employee> EmployeeDatabase { get; private set; }
+        public User CurrentUser { get; } = Authentication.Instance.CurrentUser;
 
-			EmployeeDatabase = DatabaseManager.Instance.GetDatabase<Employee>();
-			if(EmployeeDatabase == null) {
-				EmployeeDatabase = new Database<Employee>();
-				DatabaseManager.Instance.RegisterDatabase(EmployeeDatabase);
-			}
+        public MainWindow () {
+            InitializeComponent();
 
-			Employees = EmployeeDatabase.Select();
-		}
+            EmployeeDatabase = DatabaseManager.Instance.GetDatabase<Employee>();
+            if (EmployeeDatabase == null) {
+                EmployeeDatabase = new Database<Employee>();
+                DatabaseManager.Instance.RegisterDatabase(EmployeeDatabase);
+            }
 
-		private void ExportMenuItem_Click(object sender, RoutedEventArgs e) {
-			Export();
-		}
+            Employees = EmployeeDatabase.Select();
 
-		private void ImportMenuItem_Click(object sender, RoutedEventArgs e) {
-			Import();
-		}
+            if (!CurrentUser.IsHaveAccessTo("EmployeeManagement", "EmployeeManagement.WRITE")) {
+                Editor.Visibility = Visibility.Collapsed;
+                return;
+            }
+        }
 
-		private void ExportReportMenuItem_Click(object sender, RoutedEventArgs e) {
-			MakeReport();
-		}
+        #region layout events
+        private void Window_Closed (object sender, EventArgs e) {
+            IsShown = false;
+        }
 
-		private void Window_Closed(object sender, EventArgs e) {
-			IsShown = false;
-		}
+        private void Window_Loaded (object sender, RoutedEventArgs e) {
+            IsShown = true;
+        }
 
-		private void Window_Loaded(object sender, RoutedEventArgs e) {
-			IsShown = true;
-		}
+        private void ExportMenuItem_Click (object sender, RoutedEventArgs e) {
+            ExportEmployees();
+        }
 
-		private void Export() {
-			var saveFileDialog = new SaveFileDialog {
-				Title = "Select file",
-				FileName = "employees.json"
-			};
-			if(saveFileDialog.ShowDialog() == true) {
-				File.WriteAllText(saveFileDialog.FileName, JsonConvert.SerializeObject(Employees));
-			}
-		}
+        private void ImportMenuItem_Click (object sender, RoutedEventArgs e) {
+            ImportEmployees();
+        }
 
-		private void Import() {
-			var openFileDialog = new OpenFileDialog {
-				Filter = "Json|*.json",
-				Title = "Select a Json file",
-			};
-			if(openFileDialog.ShowDialog() == true) {
-				var employersDatabase = DatabaseManager.Instance.GetDatabase<Employee>();
-				employersDatabase.Read(openFileDialog.FileName);
-				
-				gridEmployers.ItemsSource = Employees;
-			}
-		}
+        private void ExportReportMenuItem_Click (object sender, RoutedEventArgs e) {
+            MakeReport();
+        }
 
-		private void MakeReport() {
-			var saveFileDialog = new SaveFileDialog {
-				Filter = "Json|*.json",
-				Title = "Select file",
-				FileName = "report.json"
-			};
-			if(saveFileDialog.ShowDialog() == true) {
-				File.WriteAllText(saveFileDialog.FileName, JsonConvert.SerializeObject(Employees.Select(e => new { e.Id, e.Name })));
-			}
-		}
+        private void ImportReportMenuItem_Click (object sender, RoutedEventArgs e) {
+            ImportReport();
+        }
 
-		private void ImportReportMenuItem_Click(object sender, RoutedEventArgs e) {
-			if(Employees == null || Employees.Count() == 0) {
-				MessageBox.Show("Загрузите сотрудников", "Ошибка создания отчёта", MessageBoxButton.OK, MessageBoxImage.Error);
-			} else {
-				new ReportWindow().ShowDialog();
+        private void Add_MenuItem_Click (object sender, RoutedEventArgs e) {
+            new AddChangeEmployeeWindow() {
+                Employee = null
+            }.ShowDialog();
 
-				Employees = EmployeeDatabase.Select();
-			}
-		}
-	}
+            NotifyListChanged();
+        }
+
+        private void Change_MenuItem_Click (object sender, RoutedEventArgs e) {
+            if (listEmployees.SelectedIndex != -1) {
+                new AddChangeEmployeeWindow() {
+                    Employee = listEmployees.SelectedItem as Employee
+                }.ShowDialog();
+
+                NotifyListChanged();
+            }
+        }
+
+        private void Delete_MenuItem_Click (object sender, RoutedEventArgs e) {
+            if (listEmployees.SelectedIndex != -1) {
+                Employee item = listEmployees.SelectedItem as Employee;
+                EmployeeDatabase.Remove(item);
+                listEmployees.ItemsSource = null;
+                listEmployees.ItemsSource = EmployeeDatabase.Select();
+            }
+        }
+        #endregion
+
+        private void ExportEmployees () {
+            var saveFileDialog = new SaveFileDialog {
+                Title = "Select file",
+                FileName = "employees.json"
+            };
+            if (saveFileDialog.ShowDialog() == true) {
+                File.WriteAllText(saveFileDialog.FileName, JsonConvert.SerializeObject(Employees));
+            }
+        }
+
+        private void ImportEmployees () {
+            var openFileDialog = new OpenFileDialog {
+                Filter = "Json|*.json",
+                Title = "Select a Json file",
+            };
+            if (openFileDialog.ShowDialog() == true) {
+                var employersDatabase = DatabaseManager.Instance.GetDatabase<Employee>();
+                try {
+                    employersDatabase.Read(openFileDialog.FileName);
+                    gridEmployers.ItemsSource = Employees;
+                    listEmployees.ItemsSource = Employees;
+                } catch (Exception e) {
+                    MessageBox.Show("Не удается загрузить файл");
+                }
+            }
+        }
+
+        private void MakeReport () {
+            var saveFileDialog = new SaveFileDialog {
+                Filter = "Json|*.json",
+                Title = "Select file",
+                FileName = "report.json"
+            };
+            if (saveFileDialog.ShowDialog() == true) {
+                File.WriteAllText(saveFileDialog.FileName, JsonConvert.SerializeObject(Employees.Where(e => e.HasWorkOpportunity).Select( e => new { e.Id, e.Name })));
+            }
+        }
+
+        private void ImportReport () {
+            if (Employees == null || Employees.Count() == 0) {
+                MessageBox.Show("Загрузите сотрудников", "Ошибка создания отчёта", MessageBoxButton.OK, MessageBoxImage.Error);
+            } else {
+                new ReportWindow().ShowDialog();
+                Employees = EmployeeDatabase.Select();
+            }
+        }
+
+        private void NotifyListChanged () {
+            listEmployees.ItemsSource = null;
+            listEmployees.ItemsSource = EmployeeDatabase.Select();
+        }
+    }
 }

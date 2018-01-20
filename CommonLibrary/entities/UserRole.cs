@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
 
 namespace CommonLibrary.entities
 {
-    public class UserRole : INotifyPropertyChanged
-    {
+    public class UserRole : INotifyPropertyChanged, IEquatable<UserRole> {
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -67,5 +67,17 @@ namespace CommonLibrary.entities
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-    }
+
+		public bool Equals(UserRole other) {
+			return other != null && id.Equals(other.id);
+		}
+
+		public override bool Equals(object obj) {
+			return Equals(obj as UserRole);
+		}
+
+		public override int GetHashCode() {
+			return id.GetHashCode();
+		}
+	}
 }

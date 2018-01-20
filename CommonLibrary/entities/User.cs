@@ -14,8 +14,7 @@ namespace CommonLibrary.entities {
 		private string password;
 		private int id;
 		private string login;
-		private UserRole accessLevel;
-		private string roleID;
+		private string roleId;
 		public event PropertyChangedEventHandler PropertyChanged;
 
         public static string ConvertRawPassward(string rawPassword)
@@ -25,10 +24,10 @@ namespace CommonLibrary.entities {
 
         public string RoleId
         {
-            get => roleID;
+            get => roleId;
             set
             {
-                roleID = value;
+                roleId = value;
                 OnPropertyChanged();
             }
         }
@@ -68,11 +67,8 @@ namespace CommonLibrary.entities {
             return ConvertRawPassward(rawPassword).Equals(password);
         }
 
-		private User(User user) {
+		private User(User user) : this(user.login, user.password, user.roleId) {
 			id = user.id;
-			login = user.login;
-			password = user.password;
-			accessLevel = user.accessLevel;
 		}
 
 		[JsonConstructor]
@@ -80,7 +76,7 @@ namespace CommonLibrary.entities {
 			this.id = id;
 			this.login = login;
 			this.password = password;
-			RoleId = roleId;
+			this.roleId = roleId;
 		}
 
 		public User(string login, string rawPassword, string roleId) {
@@ -91,18 +87,18 @@ namespace CommonLibrary.entities {
 		}
         public bool IsHaveAccessTo(string module, string action)
         {
-            UserRole findRole = DatabaseManager.Instance
+            var userRole = DatabaseManager.Instance
                                                .GetDatabase<UserRole>()
                                                .Select()
                                                .FirstOrDefault(role => role.Id.Equals(RoleId));
 
-            if (findRole == null)
+            if (userRole == null)
                 return false;
 
-            if (findRole.IsHaveAccessTo("ALL", "ALL"))
+            if (userRole.IsHaveAccessTo("ALL", "ALL"))
                 return true;
 
-            return findRole.IsHaveAccessTo(module, action);
+            return userRole.IsHaveAccessTo(module, action);
         }
 
 		public User(string login, string rawPassword) : this(login, rawPassword, null) {

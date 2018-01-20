@@ -13,18 +13,31 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using CommonLibrary.database;
 using CommonLibrary.entities;
+using CommonLibrary.ModuleFramework;
 
 namespace _2ModuleTaskTracker.UserManagement {
 	/// <summary>
 	/// Логика взаимодействия для UserManagementWindow.xaml
 	/// </summary>
 	public partial class UserManagementWindow : Window {
+		public static Module Module { get; } = new Module() {
+			Name = "UserManagement",
+			Actions = new List<string> {
+				"UserManagement" + ".READ",
+				"UserManagement" + ".WRITE",
+			}
+		};
 		public static bool IsShown { get; private set; }
+		public User CurrentUser { get; } = Authentication.Instance.CurrentUser;
 
 		private Database<User> UserDatabase { get; } = DatabaseManager.Instance.GetDatabase<User>();
 
 		public UserManagementWindow() {
 			InitializeComponent();
+
+			if(!CurrentUser.IsHaveAccessTo("UserManagement", "UserManagement.WRITE")) {
+				btnAddUser.IsEnabled = btnRemoveUser.IsEnabled = false;
+			}
 
 			NotifyListChanged();
 		}
@@ -38,6 +51,10 @@ namespace _2ModuleTaskTracker.UserManagement {
 		}
 
 		private void ListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+			if(!CurrentUser.IsHaveAccessTo("UserManagement", "UserManagement.WRITE")) {
+				return;
+			}
+
 			new UserEditWindow() {
 				User = (sender as ListBoxItem).Content as User
 			}.ShowDialog();

@@ -12,8 +12,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using _2ModuleTaskTracker.UserManagement;
+using CommonLibrary;
 using CommonLibrary.database;
 using CommonLibrary.entities;
+using CommonLibrary.ModuleFramework;
 
 namespace _2ModuleTaskTracker {
 	/// <summary>
@@ -22,9 +24,9 @@ namespace _2ModuleTaskTracker {
 	public partial class MainWindow : Window {
 		public MainWindow() {
 			InitializeComponent();
-            Module2Button.IsEnabled = Authentication.Instance.CurrentUser.IsHaveAccessTo("TasksModule", "TasksModule.READ");
-
-			// userManagementMenuItem.IsEnabled = Authentication.Instance.CurrentUser.AccessLevel >= UserRole.Admin;
+			var currentUser = Authentication.Instance.CurrentUser;
+			Module2Button.IsEnabled = currentUser.IsHaveAccessTo("TasksModule", "TasksModule.READ");
+			userManagementMenu.IsEnabled = currentUser.IsHaveAccessTo("UserManagement", "UserManagement.READ");
 		}
 
 		private void QuitMenuItem_Click(object sender, RoutedEventArgs e) {
@@ -50,8 +52,11 @@ namespace _2ModuleTaskTracker {
 		}
 
 		private void Window_Closed(object sender, EventArgs e) {
-			DatabaseManager.Instance.Close();
 			new AuthenticationWindow().Show();
+		}
+
+		private void RoleManagementMenuItem_Click(object sender, RoutedEventArgs e) {
+			EditUserRoles.Show(ModuleManager.Instance.Modules.Select(kv => kv.Value).ToList());
 		}
 	}
 }

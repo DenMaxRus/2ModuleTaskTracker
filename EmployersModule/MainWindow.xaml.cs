@@ -28,6 +28,7 @@ namespace EmployersModule {
         private IEnumerable<Employee> Employees { get; set; }
 
         public Database<Employee> EmployeeDatabase { get; private set; }
+        public User CurrentUser { get; } = Authentication.Instance.CurrentUser;
 
         public MainWindow () {
             InitializeComponent();
@@ -39,6 +40,13 @@ namespace EmployersModule {
             }
 
             Employees = EmployeeDatabase.Select();
+
+            if (!CurrentUser.IsHaveAccessTo("EmployeeManagement", "EmployeeManagement.WRITE")) {
+                AddOption.Visibility = Visibility.Collapsed;
+                ChangeOption.Visibility = Visibility.Collapsed;
+                DeleteOption.Visibility = Visibility.Collapsed;
+                return;
+            }
         }
 
         #region layout events
@@ -67,11 +75,24 @@ namespace EmployersModule {
         }
 
         private void Add_MenuItem_Click (object sender, RoutedEventArgs e) {
+            new AddChangeEmployeeWindow() {
+                Employee = null
+            }.ShowDialog();
 
+            NotifyListChanged();
+        }
+
+        private void NotifyListChanged () {
+            listEmployees.ItemsSource = null;
+            listEmployees.ItemsSource = EmployeeDatabase.Select();
         }
 
         private void Change_MenuItem_Click (object sender, RoutedEventArgs e) {
+            new AddChangeEmployeeWindow() {
+                Employee = listEmployees.SelectedItem as Employee
+            }.ShowDialog();
 
+            NotifyListChanged();
         }
 
         private void Delete_MenuItem_Click (object sender, RoutedEventArgs e) {

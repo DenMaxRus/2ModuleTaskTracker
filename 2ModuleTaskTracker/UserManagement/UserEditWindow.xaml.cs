@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,11 +27,18 @@ namespace _2ModuleTaskTracker.UserManagement {
 			set {
 				user = value == null ? new User("username", "password") : User.Copy(value);
 				txtPassword.Password = user.Password;
+				cmbRole.SelectedItem = AvailableRoles.FirstOrDefault(r => r.Id == user.RoleId);
 			}
 		}
 
+		private Database<UserRole> RoleDatabase { get; } = DatabaseManager.Instance.GetDatabase<UserRole>();
+
+		public IReadOnlyCollection<UserRole> AvailableRoles { get; private set; }
+
 		public UserEditWindow() {
 			InitializeComponent();
+
+			AvailableRoles = RoleDatabase.Select();
 		}
 
 		private void SaveButton_Click(object sender, RoutedEventArgs e) {
@@ -43,6 +51,16 @@ namespace _2ModuleTaskTracker.UserManagement {
 
 		private void Button_Click(object sender, RoutedEventArgs e) {
 			Close();
+		}
+
+		private class UserRoleToStringConverter : IValueConverter {
+			public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+				return (value as UserRole).Id;
+			}
+
+			public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
+				throw new NotImplementedException();
+			}
 		}
 	}
 }

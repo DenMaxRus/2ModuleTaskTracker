@@ -64,6 +64,15 @@ namespace CommonLibrary.entities {
         public Employee () : this(typeof(Employee).Name + "_" + GlobalId, "unknown", 0, 0, true) {
         }
 
+        public Employee (Employee other) {
+            this.id = other.id;
+            this.name = other.name;
+            this.occupation = other.occupation;
+            this.salary = other.salary;
+            this.hoursPerDay = other.hoursPerDay;
+            this.hasWorkOpportunity = other.hasWorkOpportunity;
+        }
+
         public Employee (string name, string occupation, double salary, int hoursPerDay, bool hasWorkOpportunity) {
             Id = GlobalId++;
             Occupation = occupation;
@@ -75,7 +84,11 @@ namespace CommonLibrary.entities {
 
         protected void OnPropertyChanged ([CallerMemberName] string propertyName = null) {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }        
+        }
+
+        public static Employee Copy (Employee copyFrom) {
+            return new Employee(copyFrom);
+        }
 
         public bool Equals (Employee other) {
             return other != null && id.Equals(other.id);

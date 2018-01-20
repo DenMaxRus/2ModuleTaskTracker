@@ -54,12 +54,12 @@
                                 </LinearGradientBrush>
                             </Border.Background>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock x:Name="id" Text="{Binding Path=Id}" Width="25" Margin="10,0,0,0" Height="25" VerticalAlignment="Center" />
-                                <TextBlock x:Name="name" Text="{Binding Path=Name}" Width="200" Margin="10,0,0,0" Height="25" VerticalAlignment="Center" />
-                                <TextBlock x:Name="occupation" Text="{Binding Path=Occupation}" Width="200" Margin="10,0,0,0" Height="25" VerticalAlignment="Center" />
-                                <TextBlock x:Name="salary" Text="{Binding Path=Salary, StringFormat={}{0:C}}" Width="100" Margin="10,0,0,0" Height="25" VerticalAlignment="Center" />
-                                <TextBlock x:Name="hoursPerDay" Text="{Binding Path=HoursPerDay}" Width="40" Margin="10,0,0,0" Height="25" VerticalAlignment="Center" />
-                                <TextBlock x:Name="hasWorkOpportunity" Text="{Binding Path=HasWorkOpportunity}" Width="50" Margin="10,0,0,0" Height="25" VerticalAlignment="Center" />
+                                <TextBox x:Name="id" Text="{Binding Path=Id}" Width="25" Margin="10,0,0,0" Height="25" VerticalAlignment="Center" />
+                                <TextBox x:Name="name" Text="{Binding Path=Name}" Width="200" Margin="10,0,0,0" Height="25" VerticalAlignment="Center" />
+                                <TextBox x:Name="occupation" Text="{Binding Path=Occupation}" Width="200" Margin="10,0,0,0" Height="25" VerticalAlignment="Center" />
+                                <TextBox x:Name="salary" Text="{Binding Path=Salary, StringFormat={}{0:C}}" Width="100" Margin="10,0,0,0" Height="25" VerticalAlignment="Center" />
+                                <TextBox x:Name="hoursPerDay" Text="{Binding Path=HoursPerDay}" Width="40" Margin="10,0,0,0" Height="25" VerticalAlignment="Center" />
+                                <TextBox x:Name="hasWorkOpportunity" Text="{Binding Path=HasWorkOpportunity}" Width="50" Margin="10,0,0,0" Height="25" VerticalAlignment="Center" />
                             </StackPanel>
                         </Border>
                     </DataTemplate>

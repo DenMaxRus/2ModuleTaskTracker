@@ -10,6 +10,8 @@ namespace TasksModule
         public int Id { get { return _id; } set { _id = value; OnPropertyChanged(); } }
         private string _name;
         public string Name { get { return _name; } set { _name = value; OnPropertyChanged(); } }
+        private double _hoursPerDay;
+        public double HoursPerDay { get { return _hoursPerDay; } set { _hoursPerDay = value; OnPropertyChanged(); } }
         public event PropertyChangedEventHandler PropertyChanged;
 
         public Responsible() { }

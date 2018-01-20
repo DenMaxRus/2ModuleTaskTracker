@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommonLibrary.ModuleFramework;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -11,5 +12,14 @@ namespace TasksModule {
 	/// Логика взаимодействия для App.xaml
 	/// </summary>
 	public partial class App : Application {
-	}
+        public static Module Module { get; } = new Module()
+        {
+            Name = "TasksModule",
+            Actions = new List<string> {
+                "TasksModule" + ".READ",
+                "TasksModule" + ".WRITE",
+                "TasksModule" + ".CHANGE"
+            }
+        };
+    }
 }

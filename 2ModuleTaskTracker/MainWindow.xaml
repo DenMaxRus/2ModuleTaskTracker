@@ -22,6 +22,6 @@
             <MenuItem Name="userManagementMenuItem" Header="User management" Click="UserManagementMenuItem_Click"/>
         </Menu>
         <Button Grid.Row="1" Grid.Column="0" Click="Module1Button_Click">Module 1</Button>
-        <Button Grid.Row="1" Grid.Column="1" Click="Module2Button_Click">Module 2</Button>
+        <Button Name="Module2Button" Grid.Row="1" Grid.Column="1" Click="Module2Button_Click">Module 2</Button>
     </Grid>
 </Window>

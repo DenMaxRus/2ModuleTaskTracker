@@ -28,6 +28,12 @@ namespace _2ModuleTaskTracker {
 			});
 			ModuleManager.Instance.Register(EmployersModule.App.Module);
 
+            ModuleManager.Instance.Register (new Module () {
+                Name = "EditUserRoles",
+                Actions = new List<string> { "EditUserRoles.READ", "EditUserRoles.WRITE" }
+            });
+            ModuleManager.Instance.Register(EmployersModule.App.Module);
+
 			var rolesDatabase = new UserRoleDatabase().Read("roles.json");
 			if(rolesDatabase.Select().Count == 0) {
 				var godRole = new UserRole();

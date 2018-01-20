@@ -22,6 +22,7 @@ namespace _2ModuleTaskTracker {
 	public partial class MainWindow : Window {
 		public MainWindow() {
 			InitializeComponent();
+            Module2Button.IsEnabled = Authentication.Instance.CurrentUser.IsHaveAccessTo("TasksModule", "TasksModule.READ");
 
 			// userManagementMenuItem.IsEnabled = Authentication.Instance.CurrentUser.AccessLevel >= UserRole.Admin;
 		}

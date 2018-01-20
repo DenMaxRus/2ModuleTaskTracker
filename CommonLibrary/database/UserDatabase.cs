@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using CommonLibrary.database;
+﻿using System.Linq;
 using CommonLibrary.entities;
 
 namespace CommonLibrary.database {
@@ -20,5 +18,12 @@ namespace CommonLibrary.database {
 			base.Drop();
 			GlobalId = 1;
 		}
+
+        public override Database<User> Read (string filePath)
+        {
+            var result = base.Read (filePath);
+            GlobalId = Select ().Max (e => e.Id) + 1;
+            return result;
+        }
 	}
 }

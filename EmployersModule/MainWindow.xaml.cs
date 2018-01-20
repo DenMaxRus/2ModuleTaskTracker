@@ -2,19 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using CommonLibrary.database;
 using CommonLibrary.entities;
+using CommonLibrary.ModuleFramework;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 
@@ -24,6 +15,14 @@ namespace EmployersModule {
     /// </summary>
     public partial class MainWindow : Window {
         public static bool IsShown { get; private set; }
+
+        public static Module Module { get; } = new Module() {
+            Name = "EmployeeManagement",
+            Actions = new List<string> {
+                "EmployeeManagement" + ".READ",
+                "EmployeeManagement" + ".WRITE",
+            }
+        };
 
         private IEnumerable<Employee> Employees { get; set; }
 
@@ -42,9 +41,7 @@ namespace EmployersModule {
             Employees = EmployeeDatabase.Select();
 
             if (!CurrentUser.IsHaveAccessTo("EmployeeManagement", "EmployeeManagement.WRITE")) {
-                AddOption.Visibility = Visibility.Collapsed;
-                ChangeOption.Visibility = Visibility.Collapsed;
-                DeleteOption.Visibility = Visibility.Collapsed;
+                Editor.Visibility = Visibility.Collapsed;
                 return;
             }
         }
@@ -82,17 +79,14 @@ namespace EmployersModule {
             NotifyListChanged();
         }
 
-        private void NotifyListChanged () {
-            listEmployees.ItemsSource = null;
-            listEmployees.ItemsSource = EmployeeDatabase.Select();
-        }
-
         private void Change_MenuItem_Click (object sender, RoutedEventArgs e) {
-            new AddChangeEmployeeWindow() {
-                Employee = listEmployees.SelectedItem as Employee
-            }.ShowDialog();
+            if (listEmployees.SelectedIndex != -1) {
+                new AddChangeEmployeeWindow() {
+                    Employee = listEmployees.SelectedItem as Employee
+                }.ShowDialog();
 
-            NotifyListChanged();
+                NotifyListChanged();
+            }
         }
 
         private void Delete_MenuItem_Click (object sender, RoutedEventArgs e) {
@@ -139,7 +133,7 @@ namespace EmployersModule {
                 FileName = "report.json"
             };
             if (saveFileDialog.ShowDialog() == true) {
-                File.WriteAllText(saveFileDialog.FileName, JsonConvert.SerializeObject(Employees.Select(e => new { e.Id, e.Name })));
+                File.WriteAllText(saveFileDialog.FileName, JsonConvert.SerializeObject(Employees.Where(e => e.HasWorkOpportunity).Select( e => new { e.Id, e.Name })));
             }
         }
 
@@ -150,6 +144,11 @@ namespace EmployersModule {
                 new ReportWindow().ShowDialog();
                 Employees = EmployeeDatabase.Select();
             }
+        }
+
+        private void NotifyListChanged () {
+            listEmployees.ItemsSource = null;
+            listEmployees.ItemsSource = EmployeeDatabase.Select();
         }
     }
 }

@@ -25,7 +25,7 @@
                     <MenuItem Header="Export report" Click="ExportReportMenuItem_Click"/>
                     <MenuItem Header="Import report" Click="ImportReportMenuItem_Click"/>
                 </MenuItem>
-                <MenuItem Header="Editor">
+                <MenuItem Header="Editor" Name="Editor">
                     <MenuItem Header="Add" Name="AddOption" Click="Add_MenuItem_Click" />
                     <MenuItem Header="Change" Name="ChangeOption" Click="Change_MenuItem_Click" />
                     <MenuItem Header="Delete" Name="DeleteOption" Click="Delete_MenuItem_Click" />

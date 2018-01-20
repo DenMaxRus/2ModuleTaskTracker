@@ -60,7 +60,7 @@ namespace CommonLibrary
             buttonAdd.Text = "Create new role";
             buttonAdd.Parent = formMain;
             buttonAdd.Dock = DockStyle.Bottom;
-
+            buttonAdd.Enabled = Authentication.Instance.CurrentUser.IsHaveAccessTo("EditUserRoles", "WRITE");
             buttonAdd.Click += OnButtonAddClick;
 
             formMain.StartPosition = FormStartPosition.CenterScreen;
@@ -170,7 +170,8 @@ namespace CommonLibrary
             roleId.TextAlign = ContentAlignment.MiddleLeft;
             roleId.AutoSize = true;
 
-            bool enableButtons = !role.Id.Equals("role_1");
+            bool enableButtons = 
+                Authentication.Instance.CurrentUser.IsHaveAccessTo("EditUserRoles", "WRITE") && !role.Id.Equals("role_1");
 
             Button remove = new Button();
             remove.Text = "Remove";
